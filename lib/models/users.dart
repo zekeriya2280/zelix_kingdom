@@ -13,15 +13,15 @@ class Users {
   List<City> cities = [];
   Users({required this.id, required this.nickname, required this.email , required this.money, required this.factories, required this.products, required this.cities});
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
-      'id': id ?? '',
-      'nickname': nickname ?? '',
-      'email': email ?? '',
-      'money': money ?? 0,
-      'buildings': factories ?? [],
-      'products': products ?? [],
-      'cities': cities ?? [],
+      'id': id,
+      'nickname': nickname,
+      'email': email,
+      'money': money,
+      'factories': factories.map((e) => e.toMap()).toList(),
+      'products': products.map((e) => e.toJson()).toList(),
+      'cities': cities.map((e) => e.toJson()).toList(),
     };
   }
 

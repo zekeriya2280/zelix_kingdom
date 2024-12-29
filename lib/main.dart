@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:zelix_kingdom/auth/login.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:zelix_kingdom/auth/signup.dart';
+import 'package:zelix_kingdom/intro.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +44,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginScreen()
+      home: LoginScreen(),
+      routes: {
+        '/login': (context) => LoginScreen(),
+        '/intro': (context) => const IntroScreen(),
+        '/signup': (context) => const SignUpScreen(),
+      },
     );
   }
 }

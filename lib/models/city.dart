@@ -137,4 +137,5 @@ class City {
           : Warehouse(cityName: json['name'], level: 1, storedProducts: {}, waitUntilFullPerProduct: {}),
     );
   }
+  
 }
