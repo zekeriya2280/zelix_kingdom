@@ -37,8 +37,8 @@ dependencies:
   firebase_auth:
   cloud_firestore:
   firebase_core:
-  hive:
   hive_generator:
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:

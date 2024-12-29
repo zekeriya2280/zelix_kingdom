@@ -3,9 +3,8 @@ import 'package:zelix_kingdom/managements/productmanagements.dart';
 import 'package:zelix_kingdom/models/product.dart';
 
 class ProductionPage extends StatefulWidget {
-  final String userId;
 
-  const ProductionPage({super.key, required this.userId});
+  const ProductionPage({super.key});
 
   @override
   _ProductionPageState createState() => _ProductionPageState();
@@ -33,7 +32,7 @@ class _ProductionPageState extends State<ProductionPage> {
     product.isProducing = true;
     product.startTime = DateTime.now();
     await _productManagement.updateProductInHive(product);
-    await _productManagement.syncProductToFirebase(widget.userId, product);
+    await _productManagement.syncProductToFirebase(product);
 
     setState(() {
       // Hive'daki güncel değerleri çekmek için
