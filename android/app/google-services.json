@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "852386245715",
+    "project_id": "zelix-kingdom",
+    "storage_bucket": "zelix-kingdom.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852386245715:android:64fd47c891cb5f2a796aa6",
+        "android_client_info": {
+          "package_name": "com.zelix.zelix_kingdom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEzaw1LHv5R6mSX7f83W9ZZSwOw-3QoCY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
