@@ -1,4 +1,5 @@
-import 'package:hive/hive.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 part 'product.g.dart'; // Hive TypeAdapter için gerekli dosya
 
@@ -19,6 +20,14 @@ class Product {
   @HiveField(4)
   DateTime? startTime;
 
+  int get remainingTime {
+    if (startTime == null) {
+      return productionTime;
+    } else {
+      return productionTime - DateTime.now().difference(startTime!).inSeconds;
+    }
+  }
+
   Product({
     required this.id,
     required this.name,
@@ -34,7 +43,9 @@ class Product {
       name: json['name'],
       productionTime: json['productionTime'],
       isProducing: json['isProducing'] ?? false,
-      startTime: json['startTime'] != null ? DateTime.parse(json['startTime']) : null,
+      startTime: json['startTime'] != null
+          ? (json['startTime'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -46,5 +57,15 @@ class Product {
       'isProducing': isProducing,
       'startTime': startTime?.toIso8601String(),
     };
+  }
+
+  Product copyWith({DateTime? startTime, required bool isProducing}) {
+    return Product(
+      id: id,
+      name: name,
+      productionTime: productionTime,
+      isProducing: isProducing,
+      startTime: startTime ?? this.startTime,
+    );
   }
 }
