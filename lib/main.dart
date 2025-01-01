@@ -9,6 +9,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    name: 'zelix-kingdom',
     options: FirebaseOptions(
       apiKey: "AIzaSyAkzavil1xPqgpaqSJaZwPQuRRmuxSCQCg",
       appId: "1:852386245715:android:64fd47c891cb5f2a796aa6",
