@@ -4,31 +4,26 @@ import 'package:zelix_kingdom/models/factory.dart';
 import 'package:zelix_kingdom/models/product.dart';
 
 class Users {
-  final String id;
   final String nickname;
   final String email;
   int money = 0;
-  List<Product> products = [];
+  List<Map<Product, int>>  products = [];
   List<Factory> factories = [];
   List<City> cities = [];
-  Users({required this.id, required this.nickname, required this.email , required this.money, required this.factories, required this.products, required this.cities});
+  Users({ required this.nickname, required this.email , required this.money, required this.factories, required this.products, required this.cities});
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'nickname': nickname,
       'email': email,
       'money': money,
       'factories': factories.map((e) => e.toMap()).toList(),
-      'products': products.map((e) => e.toJson()).toList(),
+      'products': products.map((productMap) => productMap.map((product, amount) => MapEntry(product.toJson(), amount))).toList(),
       'cities': cities.map((e) => e.toJson()).toList(),
     };
   }
 
   factory Users.fromMap(Map<String, dynamic> material) {
-    if (material['id'] == null) {
-      throw ArgumentError('material must contain id');
-    }
     if (material['nickname'] == null) {
       throw ArgumentError('material must contain nickname');
     }
@@ -49,12 +44,11 @@ class Users {
     }
 
     return Users(
-      id: material['id'],
       nickname: material['nickname'],
       email: material['email'],
       money: material['money'],
       factories: List<Factory>.from(material['factories']),
-      products: List<Product>.from(material['products']),
+      products: material['products'].map((product, amount) => MapEntry(Product.fromJson(product), amount)),
       cities: List<City>.from(material['cities']),
     );
   }

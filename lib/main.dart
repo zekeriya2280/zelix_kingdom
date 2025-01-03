@@ -3,9 +3,7 @@ import 'package:zelix_kingdom/auth/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:zelix_kingdom/auth/signup.dart';
 import 'package:zelix_kingdom/intro.dart';
-import 'package:zelix_kingdom/models/product.dart';
 import 'package:zelix_kingdom/pages/productspage.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,9 +15,6 @@ Future<void> main() async {
      projectId: "zelix-kingdom",
    ),
   );
-  await Hive.initFlutter();
-  Hive.registerAdapter(ProductAdapter()); // Register the adapter
-  await Hive.openBox<Product>('products'); 
   runApp(const MyApp());
 }
 

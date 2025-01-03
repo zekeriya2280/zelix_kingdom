@@ -1,23 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-
-part 'product.g.dart'; // Hive TypeAdapter için gerekli dosya
-
-@HiveType(typeId: 0) // Her model için benzersiz typeId kullanılır
 class Product {
-  @HiveField(0)
-  final String id;
-
-  @HiveField(1)
   final String name;
-
-  @HiveField(2)
   final int productionTime;
-
-  @HiveField(3)
   bool isProducing;
-
-  @HiveField(4)
   DateTime? startTime;
 
   int get remainingTime {
@@ -29,7 +14,6 @@ class Product {
   }
 
   Product({
-    required this.id,
     required this.name,
     required this.productionTime,
     this.isProducing = false,
@@ -37,9 +21,8 @@ class Product {
   });
 
   // JSON'dan Product modeline dönüşüm
-  factory Product.fromJson(String id, Map<String, dynamic> json) {
+  factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: id,
       name: json['name'],
       productionTime: json['productionTime'],
       isProducing: json['isProducing'] ?? false,
@@ -61,7 +44,6 @@ class Product {
 
   Product copyWith({DateTime? startTime, required bool isProducing}) {
     return Product(
-      id: id,
       name: name,
       productionTime: productionTime,
       isProducing: isProducing,

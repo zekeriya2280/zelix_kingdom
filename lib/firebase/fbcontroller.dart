@@ -1090,7 +1090,7 @@ class Fbcontroller {
       String nickname,
       String email,
       Map<Factory, int> factories,
-      Map<Product, int> products,
+      Map< String , Map< Product, int > > products,
       Map<City, int> cities) async {
     if ([id, nickname, email].any((element) => element.isEmpty)) {
       print('Invalid input: all fields must be non-empty.');
