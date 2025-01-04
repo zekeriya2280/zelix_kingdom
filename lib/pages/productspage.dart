@@ -136,7 +136,7 @@ class ProductionPageState extends State<ProductionPage> {
                 ),
               );
             },
-          );
+          ),
     );
   }
 }

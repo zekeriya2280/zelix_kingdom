@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:zelix_kingdom/models/city.dart';
+import 'package:zelix_kingdom/models/factory.dart';
 import 'package:zelix_kingdom/models/product.dart';
 
 class ProductManagement {
@@ -37,6 +39,40 @@ class ProductManagement {
           });
     } catch (e) {
       print('Error syncing product to Firebase: $e');
+    }
+  }
+  Future<void> signUpToFirebaseUsers(
+      String id,
+      String nickname,
+      String email,
+      Map<Factory, int> factories,
+      Map< String , Map< Product, int > > products,
+      Map<City, int> cities) async {
+    if ([id, nickname, email].any((element) => element.isEmpty)) {
+      print('Invalid input: all fields must be non-empty.');
+      return;
+    }
+    try {
+      final userData = {
+        'id': id,
+        'nickname': nickname,
+        'email': email,
+        'money': 1000,
+        'factories': factories,
+        'products': products,
+        'cities': cities
+      };
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(id)
+          .set(userData);
+      print('User successfully created.');
+    } on FirebaseException catch (e) {
+      print(e.code == 'permission-denied'
+          ? 'Permission denied: $e'
+          : 'Error creating user: $e');
+    } catch (e) {
+      print('An unexpected error occurred: $e');
     }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:zelix_kingdom/firebase/fbcontroller.dart';
+import 'package:zelix_kingdom/managements/productmanagements.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -27,7 +27,7 @@ class SignUpScreenState extends State<SignUpScreen> {
           final user = result.user;
           if (user != null) {
             await user.updateDisplayName(nicknameController.text);
-            await Fbcontroller().signUpToFirebaseUsers(
+            await ProductManagement().signUpToFirebaseUsers(
                 user.uid, nicknameController.text, emailController.text, {}, {}, {});
             if (mounted) {
               Navigator.pushNamed(context, '/intro');
