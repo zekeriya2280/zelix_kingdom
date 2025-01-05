@@ -3,7 +3,8 @@ import 'package:zelix_kingdom/auth/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:zelix_kingdom/auth/signup.dart';
 import 'package:zelix_kingdom/intro.dart';
-import 'package:zelix_kingdom/pages/productspage.dart';
+import 'package:zelix_kingdom/pages/allproducts.dart';
+import 'package:zelix_kingdom/pages/userproductspage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +51,8 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/intro': (context) => const IntroScreen(),
         '/signup': (context) => const SignUpScreen(),
-        '/game': (context) => const ProductionPage(),
+        '/userproducts': (context) => const ProductionPage(),
+        '/allproducts': (context) => const Allproducts()
       },
     );
   }

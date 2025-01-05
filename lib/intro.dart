@@ -46,7 +46,7 @@ class _IntroScreenState extends State<IntroScreen> {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(context, '/game', (route) => false);
+                Navigator.pushNamedAndRemoveUntil(context, '/allproducts', (route) => false);
               },
               child: const Text('Game'),
             ),

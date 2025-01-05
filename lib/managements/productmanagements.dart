@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:zelix_kingdom/models/city.dart';
@@ -54,6 +56,59 @@ class ProductManagement {
         }
       });
 }
+Future<void> addSelectedProductFromAllProductsToUserFBProducts(Product product) async {
+  await _db
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+        'products.${product.id}': {
+          'remainingTime': product.remainingTime,
+          'isProducing': product.isProducing,
+          'startTime': product.startTime,
+          'id': product.id,
+          'name': product.name,
+          'productionTime': product.productionTime,
+          'amount': product.amount
+        }
+      });
+}
+ Future<void> addProductsToFirestore() async { // Ürünleri PRODUCTS a ekler // RESET ............................................
+    final allproducts = _db.collection('products');
+    try {
+      final snapshot = await allproducts.get();
+      final oldproducts = snapshot.docs.map((doc) => Product.fromJson(doc.data())).toList();
+      if (snapshot.docs.isNotEmpty) {
+        // Mevcut ürünler yoksa, yeni ürünleri ekleyin
+        var newProducts = [
+          Product(
+            id: Random().nextInt(1000000000).toString(),
+            name: 'apple',
+            startTime: null,
+            isProducing: false, 
+            productionTime: Random().nextInt(100)+3,
+            remainingTime: Random().nextInt(100)+3, 
+            amount: 0,
+          ),
+          Product(
+            id: Random().nextInt(1000000000).toString(),
+            name: 'water',
+            productionTime: Random().nextInt(100)+3,
+            remainingTime: Random().nextInt(100)+3,
+            startTime: null,
+            isProducing: false,
+            amount: 0,
+          ),
+          // Daha fazla ürün ekleyebilirsiniz
+        ];  
+        newProducts = newProducts.where((product) => !oldproducts.any((oldproduct) => oldproduct.id == product.id)).toList();
+        for (final product in newProducts) {
+          await allproducts.doc(product.id).set(product.toJson());
+        }
+      }
+    } catch (e) {
+      print('Error adding products to Firestore: $e');
+    }
+  }
 
 Future<void> syncProductsToUserFirebaseAndIncreaseAmount(Product product) async {
   await _db
@@ -70,6 +125,9 @@ Future<void> syncProductsToUserFirebaseAndIncreaseAmount(Product product) async 
           'remainingTime': 0,
         }
       });
+}
+Future<void> addToAllProductsToFirebase(Product product) async {
+  await _db.collection('products').doc(product.id).set(product.toJson());
 }
   Future<int> fetchtheamountoftheproductfromUsersFirebase(Product product)async{
     try {
