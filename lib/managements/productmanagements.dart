@@ -8,45 +8,90 @@ class ProductManagement {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // Firebase'den tüm ürünleri çek ve Hive'a kaydet
-  Future<Product> fetchProductsFromFirebase() async {
-    var product = Product(name: '', productionTime: 0);
+  Future<List<Product>> fetchProductsFromFirebase() async {
     try {
       final snapshot = await _db.collection('products').get();
       print('Fetched ${snapshot.docs.length} products from Firebase.');
-      for (var doc in snapshot.docs) {
-        product = Product.fromJson(doc.data());
-      }
-      return product;
+      return snapshot.docs.map((doc) => Product.fromJson(doc.data())).toList();
     } catch (e) {
       print('Error fetching products: $e');
     }
-    return product;
+    return [];
+  }
+  Future<List<Product>> fetchUserProductsFromFirebase(DocumentSnapshot<Map<String, dynamic>> snapshot) async {
+    try {
+      final snapshot = await _db.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+      if (snapshot.exists) {
+        final Map<String, dynamic>? productidanduserProductsmap = snapshot.data()!['products'];
+        print('Fetched ${productidanduserProductsmap} products from Firebase.');
+        if (productidanduserProductsmap != null) {
+          print('Fetched ${productidanduserProductsmap} products from Firebase.');
+          return productidanduserProductsmap.map((key, value) => MapEntry(key, Product.fromJson(value))).values.toList();
+        }
+      }
+    } on FirebaseException catch (e) {
+      print('Error fetching products: $e');
+    } catch (e) {
+      print('An unexpected error occurred: $e');
+    }
+    return [];
   }
 
   // Firebase'de kullanıcı ürün durumlarını güncelle
-  Future<void> syncProductToUserFirebase(Product product, int amount) async {
+ Future<void> updateProductRemainingTime(Product product, int remainingTime) async {
+  await _db
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+        'products.${product.id}': {
+          'remainingTime': remainingTime,
+          'isProducing': product.isProducing,
+          'startTime': product.startTime,
+          'id': product.id,
+          'name': product.name,
+          'productionTime': product.productionTime,
+          'amount': product.amount
+        }
+      });
+}
+
+Future<void> syncProductsToUserFirebaseAndIncreaseAmount(Product product) async {
+  await _db
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+        'products.${product.id}': {
+          'name': product.name,
+          'productionTime': product.productionTime,
+          'isProducing': false,
+          'startTime': null,
+          'id': product.id,
+          'amount': product.amount + 1,
+          'remainingTime': 0,
+        }
+      });
+}
+  Future<int> fetchtheamountoftheproductfromUsersFirebase(Product product)async{
     try {
-      await _db
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid).
-          update({
-            'products':  {{
-                'name': product.name,
-                'productionTime': product.productionTime,
-                'isProducing': product.isProducing,
-                'startTime': product.startTime?.toIso8601String(),}, amount+1}
-            
-          });
+      final snapshot = await _db.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+      print('Fetched ${snapshot.data()} products from Firebase.');
+      final userproducts = snapshot.data()!['products']; 
+      for (var productandamountmap in userproducts) {
+        productandamountmap.forEach((key, value) {return  key['name'] == product.name ? value : 0; });
+        
+      }
+      return 0;
     } catch (e) {
-      print('Error syncing product to Firebase: $e');
-    }
+      print('Error fetching products: $e');
+    } 
+    return 0;           
   }
   Future<void> signUpToFirebaseUsers(
       String id,
       String nickname,
       String email,
       Map<Factory, int> factories,
-      Map< String , Map< Product, int > > products,
+      Map< String , Product > products,
       Map<City, int> cities) async {
     if ([id, nickname, email].any((element) => element.isEmpty)) {
       print('Invalid input: all fields must be non-empty.');
