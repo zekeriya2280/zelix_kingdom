@@ -23,9 +23,9 @@ class ProductManagement {
       final snapshot = await _db.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
       if (snapshot.exists) {
         final Map<String, dynamic>? productidanduserProductsmap = snapshot.data()!['products'];
-        print('Fetched ${productidanduserProductsmap} products from Firebase.');
+        print('Fetched $productidanduserProductsmap products from Firebase.');
         if (productidanduserProductsmap != null) {
-          print('Fetched ${productidanduserProductsmap} products from Firebase.');
+          print('Fetched $productidanduserProductsmap products from Firebase.');
           return productidanduserProductsmap.map((key, value) => MapEntry(key, Product.fromJson(value))).values.toList();
         }
       }
