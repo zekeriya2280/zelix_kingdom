@@ -17,10 +17,12 @@ class _AllproductsState extends State<Allproducts> {
   );
   List<Product> products = []; // Ürünler
   ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
+  Map<int, bool> addingProduct = {}; // Ürün ekleme durumu kontrolü
 
   @override
   void initState() {
     //addProductsToFirestore(); // Ürünleri products a ekler // RESET
+    addingProduct = {for (int i = 0; i < products.length; i++) i: false};
     _productManagement = ProductManagement();
     super.initState();
   }
@@ -58,7 +60,12 @@ class _AllproductsState extends State<Allproducts> {
               style: GoogleFonts.lato(color: Colors.white),
             ), // Başlık
             centerTitle: true,
-            backgroundColor: const Color.fromARGB(210, 13, 72, 161), // Mavi arka plan
+            backgroundColor: const Color.fromARGB(
+              210,
+              13,
+              72,
+              161,
+            ), // Mavi arka plan
             actions: [
               IconButton(
                 icon: const Icon(Icons.shopping_cart, color: Colors.white),
@@ -78,8 +85,28 @@ class _AllproductsState extends State<Allproducts> {
             itemCount: products.length, // Ürün sayısı
             padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 0),
             itemBuilder: (context, index) {
+              List<Color> cardColors = List.generate(
+                products.length,
+                (index) => const Color.fromARGB(255, 240, 158, 34),
+              );
               final product = products[index]; // Mevcut ürün
-              final cardColor = const Color.fromARGB(255, 240, 158, 34); // Kart rengi
+              //addingProduct = { for (int i = 0; i < products.length; i++) i: false };
+
+              // cardColors.map((color) {
+              //print('Adding Product: ${addingProduct}');
+              addingProduct.forEach((index, value) {
+                //print('Index: ${addingProduct[index]}');
+                if (addingProduct[index] == true) {
+                  cardColors[index] = Colors.green;
+                } else {
+                  cardColors[index] = const Color.fromARGB(255, 240, 158, 34);
+                }
+              });
+              // }).toList();
+
+            // print(
+            //   'Card Color: ${cardColors.map((e) => e.toARGB32()).toList()}',
+            // );
               return SingleChildScrollView(
                 child: InkWell(
                   onTap:
@@ -91,7 +118,12 @@ class _AllproductsState extends State<Allproducts> {
                                 child: Text(
                                   product.name,
                                   style: GoogleFonts.lato(
-                                    color: const Color.fromARGB(255, 179, 255, 0),
+                                    color: const Color.fromARGB(
+                                      255,
+                                      179,
+                                      255,
+                                      0,
+                                    ),
                                     fontSize: 30,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.5,
@@ -147,7 +179,12 @@ class _AllproductsState extends State<Allproducts> {
                                   onPressed: () => Navigator.pop(context),
                                 ),
                               ],
-                              backgroundColor: const Color.fromARGB(222, 34, 61, 102),
+                              backgroundColor: const Color.fromARGB(
+                                222,
+                                34,
+                                61,
+                                102,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
@@ -172,43 +209,54 @@ class _AllproductsState extends State<Allproducts> {
                             ),
                       ),
                   child: Card(
-                    color: cardColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 8,
-                    child: ListTile(
-                      title: Text(
-                        product.name,
-                        style: GoogleFonts.lato(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
-                          wordSpacing: 1.5,
+                        color: cardColors[index],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 8,
+                        child: ListTile(
+                          title: Text(
+                            product.name,
+                            style: GoogleFonts.lato(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5,
+                              wordSpacing: 1.5,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Production Time: ${product.productionTime}',
+                            style: GoogleFonts.lato(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5,
+                              wordSpacing: 1.5,
+                            ),
+                          ),
+                          trailing: ElevatedButton(
+                            onPressed: () async {
+                              setState(() {
+                                addingProduct[index] = true;
+                              });
+                              Future.delayed(const Duration(seconds: 3), () {
+                                setState(() {
+                                  addingProduct.forEach(
+                                    (key, value) => addingProduct[key] = false,
+                                  );
+                                });
+                              });
+                              await _productManagement
+                                  .addSelectedProductFromAllProductsToUserFBProducts(
+                                    product,
+                                  );
+                            },
+                            child: const Text('Add'),
+                          ),
                         ),
                       ),
-                      subtitle: Text(
-                        'Production Time: ${product.productionTime}',
-                        style: GoogleFonts.lato(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
-                          wordSpacing: 1.5,
-                        ),
-                      ),
-                      trailing: ElevatedButton(
-                        onPressed: () async {
-                          await _productManagement
-                              .addSelectedProductFromAllProductsToUserFBProducts(
-                                product,
-                              );
-                        },
-                        child: const Text('Add'),
-                      ),
-                    ),
-                  ),
+                  
                 ),
               );
             },

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart'; // Flutter UI bileşen
 import 'package:zelix_kingdom/managements/productmanagements.dart'; // Ürün yönetimi
 import 'package:zelix_kingdom/models/product.dart'; // Ürün modeli
 import 'package:google_fonts/google_fonts.dart'; // Özel fontlar
+import 'package:intl/intl.dart'; // Date formatting
 
 class ProductionPage extends StatefulWidget {
   // Üretim sayfası
@@ -214,7 +215,6 @@ class ProductionPageState extends State<ProductionPage> {
                     elevation: 8,
                     child: ListTile(
                       title: Text(product.name, style: GoogleFonts.lato(
-
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -224,7 +224,7 @@ class ProductionPageState extends State<ProductionPage> {
                       subtitle:
                           product.isProducing
                               ? Text(
-                                'Producing... ${product.remainingTime} Started at: ${product.startTime}',
+                                'Producing... ${product.remainingTime} Started at: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(product.startTime!)}',
                                 style: GoogleFonts.lato(
                                   color: Colors.white,
                                   fontSize: 12,
