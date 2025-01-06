@@ -50,6 +50,7 @@ class ProductManagement {
           'isProducing': product.isProducing,
           'startTime': product.startTime,
           'id': product.id,
+          'purchasePrice': product.purchasePrice,
           'name': product.name,
           'productionTime': product.productionTime,
           'amount': product.amount
@@ -65,6 +66,7 @@ Future<void> addSelectedProductFromAllProductsToUserFBProducts(Product product) 
           'remainingTime': product.remainingTime,
           'isProducing': product.isProducing,
           'startTime': product.startTime,
+          'purchasePrice': product.purchasePrice,
           'id': product.id,
           'name': product.name,
           'productionTime': product.productionTime,
@@ -76,8 +78,8 @@ Future<void> addSelectedProductFromAllProductsToUserFBProducts(Product product) 
     final allproducts = _db.collection('products');
     try {
       final snapshot = await allproducts.get();
-      final oldproducts = snapshot.docs.map((doc) => Product.fromJson(doc.data())).toList();
-      if (snapshot.docs.isNotEmpty) {
+      final oldproducts = snapshot.docs.isEmpty ? [] : snapshot.docs.map((doc) => Product.fromJson(doc.data())).toList();
+      //if (snapshot.docs.isNotEmpty) {
         // Mevcut ürünler yoksa, yeni ürünleri ekleyin
         var newProducts = [
           Product(
@@ -85,26 +87,28 @@ Future<void> addSelectedProductFromAllProductsToUserFBProducts(Product product) 
             name: 'apple',
             startTime: null,
             isProducing: false, 
+            purchasePrice: 3000,
             productionTime: Random().nextInt(100)+3,
             remainingTime: Random().nextInt(100)+3, 
             amount: 0,
           ),
           Product(
             id: Random().nextInt(1000000000).toString(),
-            name: 'water',
+            name: 'sand',
             productionTime: Random().nextInt(100)+3,
             remainingTime: Random().nextInt(100)+3,
+            purchasePrice: 4000,
             startTime: null,
             isProducing: false,
             amount: 0,
           ),
           // Daha fazla ürün ekleyebilirsiniz
         ];  
-        newProducts = newProducts.where((product) => !oldproducts.any((oldproduct) => oldproduct.id == product.id)).toList();
+        newProducts =  oldproducts == [] ? newProducts : newProducts.where((product) => !oldproducts.any((oldproduct) => oldproduct.id == product.id)).toList();
         for (final product in newProducts) {
           await allproducts.doc(product.id).set(product.toJson());
         }
-      }
+     // }
     } catch (e) {
       print('Error adding products to Firestore: $e');
     }
@@ -121,6 +125,7 @@ Future<void> syncProductsToUserFirebaseAndIncreaseAmount(Product product) async 
           'isProducing': false,
           'startTime': null,
           'id': product.id,
+          'purchasePrice': product.purchasePrice,
           'amount': product.amount + 1,
           'remainingTime': 0,
         }

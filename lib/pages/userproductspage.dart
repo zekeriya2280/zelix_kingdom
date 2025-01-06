@@ -5,6 +5,7 @@ import 'package:zelix_kingdom/managements/productmanagements.dart'; // Ürün y�
 import 'package:zelix_kingdom/models/product.dart'; // Ürün modeli
 import 'package:google_fonts/google_fonts.dart'; // Özel fontlar
 import 'package:intl/intl.dart'; // Date formatting
+import 'package:vector_math/vector_math_64.dart' as vectorMath;
 
 class ProductionPage extends StatefulWidget {
   // Üretim sayfası
@@ -14,34 +15,47 @@ class ProductionPage extends StatefulWidget {
   ProductionPageState createState() => ProductionPageState();
 }
 
-class ProductionPageState extends State<ProductionPage> {
+class ProductionPageState extends State<ProductionPage>  with TickerProviderStateMixin {
   ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
+  late AnimationController _animationController;
+  late Animation<double> _rotationAnimation;
   Timer? _timer; // Zamanlayıcı
+  Map<String, Timer> _timers = {};
   List<Product> products = []; // Ürünler
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   @override
   void initState() {
     _productManagement = ProductManagement();
+     _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 20),
+    );
+    _rotationAnimation = Tween<double>(
+      begin: 364,
+      end: 365,
+    ).animate(_animationController);
+    _animationController.forward();
     super.initState();
   }
 
-  Future<void> _startTimer(Product product) async {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) async {
-      int remainingTime = await _calculateRemainingTime(product);
-      if (remainingTime <= 0) {
-        await _productManagement.syncProductsToUserFirebaseAndIncreaseAmount(
-          product,
-        );
-        _timer?.cancel();
-      } else {
-        await _productManagement.updateProductRemainingTime(
-          product,
-          remainingTime,
-        );
-      }
-    });
-  }
+
+Future<void> _startTimer(Product product) async {
+  _timers[product.id] = Timer.periodic(Duration(seconds: 1), (timer) async {
+    int remainingTime = await _calculateRemainingTime(product);
+    if (remainingTime <= 0) {
+      await _productManagement.syncProductsToUserFirebaseAndIncreaseAmount(
+        product,
+      );
+      _timers[product.id]?.cancel();
+    } else {
+      await _productManagement.updateProductRemainingTime(
+        product,
+        remainingTime,
+      );
+    }
+  });
+}
 
   Future<int> _calculateRemainingTime(Product product) async {
     int productionTime = product.productionTime;
@@ -54,6 +68,10 @@ class ProductionPageState extends State<ProductionPage> {
   @override
   void dispose() {
     _timer?.cancel();
+    for (var timer in _timers.values) {
+      timer?.cancel();
+    }
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -78,13 +96,6 @@ class ProductionPageState extends State<ProductionPage> {
                   final productsMap =
                       productMap['products'] as Map<String, dynamic>;
                   List<dynamic> allproducts = productsMap.values.toList();
-                  //print(
-                  //  '.........................................................',
-                  //);
-                  //print('Product: $allproducts');
-                  //print(
-                  //  '.........................................................',
-                  //);
                   return allproducts.map((e) => Product.fromJson(e)).toList();
                 })
                 .expand((list) => list)
@@ -207,7 +218,22 @@ class ProductionPageState extends State<ProductionPage> {
                               ),
                             ),
                       ),
-                  child: Card(
+                  child:AnimatedBuilder(
+                animation: _rotationAnimation,
+                child: Container(),
+                builder: (context, child) {
+                  print('Rotation: ${_rotationAnimation.value}');
+                  return TweenAnimationBuilder<double>( 
+                    tween: Tween(begin: 270, end: _rotationAnimation.value),
+                    duration: const Duration(milliseconds: 500),
+                    builder: (context, double value, child) {
+                      return Transform(
+                        alignment: Alignment.centerLeft,
+                        transform: Matrix4.identity()
+                          ..setEntry(3, 2, 0.001)
+                          ..rotateX(vectorMath.radians(value)),
+                          origin: const Offset(45, 10),
+                        child:  Card(
                     color: cardColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -252,6 +278,8 @@ class ProductionPageState extends State<ProductionPage> {
                                     () => setState(() {
                                       product.isProducing = false;
                                       product.startTime = null;
+                                      _timers[product.id]?.cancel();
+                                      product.isProducing = false;
                                     }),
                               )
                               : ElevatedButton(
@@ -264,6 +292,11 @@ class ProductionPageState extends State<ProductionPage> {
                               ),
                     ),
                   ),
+                      );
+                    },
+                  );
+                },
+              ),
                 ),
               );
             },

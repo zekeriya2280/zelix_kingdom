@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zelix_kingdom/managements/productmanagements.dart';
 import 'package:zelix_kingdom/models/product.dart';
+import 'package:vector_math/vector_math_64.dart' as vectorMath;
 
 class Allproducts extends StatefulWidget {
   const Allproducts({super.key});
@@ -11,7 +12,9 @@ class Allproducts extends StatefulWidget {
   State<Allproducts> createState() => _AllproductsState();
 }
 
-class _AllproductsState extends State<Allproducts> {
+class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin{  
+  late AnimationController _animationController;
+  late Animation<double> _rotationAnimation;
   CollectionReference allproducts = FirebaseFirestore.instance.collection(
     'products',
   );
@@ -21,10 +24,25 @@ class _AllproductsState extends State<Allproducts> {
 
   @override
   void initState() {
-    //addProductsToFirestore(); // Ürünleri products a ekler // RESET
+    
     addingProduct = {for (int i = 0; i < products.length; i++) i: false};
     _productManagement = ProductManagement();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 20),
+    );
+    _rotationAnimation = Tween<double>(
+      begin: 364,
+      end: 365,
+    ).animate(_animationController);
+    _animationController.forward();
     super.initState();
+  }
+  @override
+  void dispose() {
+    _animationController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -208,7 +226,22 @@ class _AllproductsState extends State<Allproducts> {
                               ),
                             ),
                       ),
-                  child: Card(
+                  child: AnimatedBuilder(
+                animation: _rotationAnimation,
+                child: Container(),
+                builder: (context, child) {
+                  print('Rotation: ${_rotationAnimation.value}');
+                  return TweenAnimationBuilder<double>( 
+                    tween: Tween(begin: 270, end: _rotationAnimation.value),
+                    duration: const Duration(milliseconds: 500),
+                    builder: (context, double value, child) {
+                      return Transform(
+                        alignment: Alignment.centerLeft,
+                        transform: Matrix4.identity()
+                          ..setEntry(3, 2, 0.001)
+                          ..rotateX(vectorMath.radians(value)),
+                          origin: const Offset(45, 10),
+                        child: Card(
                         color: cardColors[index],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
@@ -236,15 +269,13 @@ class _AllproductsState extends State<Allproducts> {
                             ),
                           ),
                           trailing: ElevatedButton(
-                            onPressed: () async {
+                            onPressed:  addingProduct[index] == true ? null : () async {
                               setState(() {
                                 addingProduct[index] = true;
                               });
-                              Future.delayed(const Duration(seconds: 3), () {
+                              Future.delayed(const Duration(seconds: 2), () {
                                 setState(() {
-                                  addingProduct.forEach(
-                                    (key, value) => addingProduct[key] = false,
-                                  );
+                                  addingProduct[index] = false;
                                 });
                               });
                               await _productManagement
@@ -256,7 +287,11 @@ class _AllproductsState extends State<Allproducts> {
                           ),
                         ),
                       ),
-                  
+                      );
+                    },
+                  );
+                },
+              ),
                 ),
               );
             },

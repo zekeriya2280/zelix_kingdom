@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zelix_kingdom/auth/signup.dart';
+import 'package:zelix_kingdom/managements/productmanagements.dart';
 //import 'package:zelix_empire/firebase/fbcontroller.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -12,12 +13,11 @@ class IntroScreen extends StatefulWidget {
 
 class _IntroScreenState extends State<IntroScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
   @override
   void initState() {
-    // DEV. RESET ----- Fbcontroller().addProductsToFirestore();
-    // DEV. RESET ----- Fbcontroller().deleteRepeatedProducts();
-    // DEV. RESET ----- Fbcontroller().firebaseChangeWordsInCollections('products', 'inflation', 'demandindex', <String, int>{});
-    // DEV. RESET ----- Fbcontroller().updateRequredMaterialsAsMap();
+    _productManagement = ProductManagement(); // Ürün yönetimi
+    //_productManagement.addProductsToFirestore(); // Ürünleri products a ekler // RESET
     super.initState();
   }
   @override
@@ -25,7 +25,7 @@ class _IntroScreenState extends State<IntroScreen> {
     return Scaffold(
       appBar: AppBar(
             backgroundColor: const Color(0xFF0D47A1), // Mavi arka plan
-            title: const Text('ZELIX EMPIRE', style: TextStyle(color: Colors.white, fontSize: 25, fontStyle: FontStyle.italic,letterSpacing: 5, fontWeight: FontWeight.bold)),
+            title: const Text('ZELIX KINGDOM', style: TextStyle(color: Colors.white, fontSize: 25, fontStyle: FontStyle.italic,letterSpacing: 5, fontWeight: FontWeight.bold)),
             centerTitle: true,
             actions: [
               IconButton(
