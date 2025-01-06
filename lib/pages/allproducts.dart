@@ -230,7 +230,6 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
                 animation: _rotationAnimation,
                 child: Container(),
                 builder: (context, child) {
-                  print('Rotation: ${_rotationAnimation.value}');
                   return TweenAnimationBuilder<double>( 
                     tween: Tween(begin: 270, end: _rotationAnimation.value),
                     duration: const Duration(milliseconds: 500),
@@ -259,7 +258,7 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
                             ),
                           ),
                           subtitle: Text(
-                            'Production Time: ${product.productionTime}',
+                            'Time: ${product.productionTime}s, Amount: ${product.amount}, Price: ${product.purchasePrice.toInt()}\$',
                             style: GoogleFonts.lato(
                               color: Colors.white,
                               fontSize: 12,

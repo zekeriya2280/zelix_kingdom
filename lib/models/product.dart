@@ -62,4 +62,7 @@ class Product {
       remainingTime: remainingTime,
     );
   }
+  bool isMoneyEnough(double userMoney) {
+    return userMoney >= purchasePrice;
+  }
 }

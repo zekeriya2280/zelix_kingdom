@@ -40,13 +40,13 @@ class ProductManagement {
   }
 
   // Firebase'de kullanıcı ürün durumlarını güncelle
- Future<void> updateProductRemainingTime(Product product, int remainingTime) async {
+ Future<void> updateUserProductsInFirebase(Product product) async {
   await _db
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .update({
         'products.${product.id}': {
-          'remainingTime': remainingTime,
+          'remainingTime': product.remainingTime,
           'isProducing': product.isProducing,
           'startTime': product.startTime,
           'id': product.id,
@@ -55,6 +55,15 @@ class ProductManagement {
           'productionTime': product.productionTime,
           'amount': product.amount
         }
+      });
+}
+
+ Future<void> updateUserMoneyInFirebase(double money) async {
+  await _db
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+        'money': money
       });
 }
 Future<void> addSelectedProductFromAllProductsToUserFBProducts(Product product) async {

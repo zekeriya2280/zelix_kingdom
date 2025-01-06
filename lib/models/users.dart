@@ -7,7 +7,7 @@ class Users {
   final String id;
   final String nickname;
   final String email;
-  int money = 0;
+  double money = 0;
   List<Map<String, Product>>  products = [];
   List<Factory> factories = [];
   List<City> cities = [];
