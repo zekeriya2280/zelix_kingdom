@@ -21,10 +21,11 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
   List<Product> products = []; // Ürünler
   ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
   Map<int, bool> addingProduct = {}; // Ürün ekleme durumu kontrolü
+  double userMoney = 0;
 
   @override
   void initState() {
-    
+    findusermoney();
     addingProduct = {for (int i = 0; i < products.length; i++) i: false};
     _productManagement = ProductManagement();
     _animationController = AnimationController(
@@ -37,6 +38,11 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
     ).animate(_animationController);
     _animationController.forward();
     super.initState();
+  }
+  Future<void> findusermoney() async {
+    await _productManagement.findusermoney().then((value) => setState(() {
+        userMoney = value;
+      }));
   }
   @override
   void dispose() {
@@ -73,6 +79,13 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 190, 198, 203),
           appBar: AppBar(
+             leading: Padding(
+              padding: const EdgeInsets.only(left: 1),
+              child: Text(
+                '   Money\n\n  ${userMoney.toStringAsFixed(1)}\$',
+                style: GoogleFonts.lato(color: Colors.white, fontSize: 11),
+              ),
+            ),
             title: Text(
               'Production',
               style: GoogleFonts.lato(color: Colors.white),

@@ -57,7 +57,19 @@ class ProductManagement {
         }
       });
 }
-
+ Future<double> findusermoney() async {
+  try {
+    final snapshot = await _db.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+    if (snapshot.exists) {
+      return double.parse((snapshot.data()! as Map<String, dynamic>)['money'].toString());
+    }
+  } on FirebaseException catch (e) {
+    print('Error fetching user money: $e');
+  } catch (e) {
+    print('An unexpected error occurred: $e');
+  }
+  return 0;
+ }
  Future<void> updateUserMoneyInFirebase(double money) async {
   await _db
       .collection('users')
