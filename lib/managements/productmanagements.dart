@@ -53,7 +53,8 @@ class ProductManagement {
           'purchasePrice': product.purchasePrice,
           'name': product.name,
           'productionTime': product.productionTime,
-          'amount': product.amount
+          'amount': product.amount,
+          'unlocked': product.unlocked
         }
       });
 }
@@ -61,7 +62,7 @@ class ProductManagement {
   try {
     final snapshot = await _db.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
     if (snapshot.exists) {
-      return double.parse((snapshot.data()! as Map<String, dynamic>)['money'].toString());
+      return double.parse((snapshot.data()!)['money'].toString());
     }
   } on FirebaseException catch (e) {
     print('Error fetching user money: $e');
@@ -91,7 +92,8 @@ Future<void> addSelectedProductFromAllProductsToUserFBProducts(Product product) 
           'id': product.id,
           'name': product.name,
           'productionTime': product.productionTime,
-          'amount': product.amount
+          'amount': product.amount,
+          'unlocked': product.unlocked
         }
       });
 }
@@ -112,6 +114,7 @@ Future<void> addSelectedProductFromAllProductsToUserFBProducts(Product product) 
             productionTime: Random().nextInt(100)+3,
             remainingTime: Random().nextInt(100)+3, 
             amount: 0,
+            unlocked: false,
           ),
           Product(
             id: Random().nextInt(1000000000).toString(),
@@ -122,6 +125,7 @@ Future<void> addSelectedProductFromAllProductsToUserFBProducts(Product product) 
             startTime: null,
             isProducing: false,
             amount: 0,
+            unlocked: false,
           ),
           // Daha fazla ürün ekleyebilirsiniz
         ];  
@@ -149,6 +153,7 @@ Future<void> syncProductsToUserFirebaseAndIncreaseAmount(Product product) async 
           'purchasePrice': product.purchasePrice,
           'amount': product.amount + 1,
           'remainingTime': 0,
+          'unlocked': product.unlocked
         }
       });
 }

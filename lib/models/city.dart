@@ -1,4 +1,6 @@
 
+import 'package:zelix_kingdom/models/product.dart';
+import 'package:zelix_kingdom/models/truck.dart';
 import 'package:zelix_kingdom/models/warehouse.dart';
 
 class City {
@@ -6,16 +8,20 @@ class City {
   double price;
   bool isThisCityPurchased;
   int level; // City level
-  Map<String, int> productDemands = {}; // Products and their demanded quantities
-  late Warehouse warehouse; // City's warehouse
+  List<Truck> trucks = []; // Trucks in the city
+  Map<Product, int> productDemands = {}; // Products and their demanded quantities
+  List<Warehouse> warehouses = []; // City's warehouse
+  List<Product> unlockedProducts = []; // Products unlocked in the city>
 
   City({
     required this.name,
     required this.price,
     this.isThisCityPurchased = false,
     this.level = 1,
-    required Map<String, int>? productDemands,
-    required Warehouse? warehouse,
+    required Map<Product, int>? productDemands,
+    required List<Warehouse>? warehouses,
+    required List<Truck>? trucks,
+    required List<Product>? unlockedProducts
   }) {
     if (level < 1 || level > 5) {
       throw ArgumentError('Invalid city level. Must be between 1 and 5.');
@@ -25,11 +31,26 @@ class City {
     } else {
       this.productDemands = {};
     }
-    if (warehouse != null) {
-      this.warehouse = warehouse;
+
+    if (warehouses != null) {
+      this.warehouses = warehouses;
     } else {
-      this.warehouse = Warehouse(cityName: name, level: 1, storedProducts: {}, waitUntilFullPerProduct: {});
+      this.warehouses = [];
     }
+
+    if (trucks != null) {
+      this.trucks = trucks;
+    } else {
+      this.trucks = [];
+    }
+
+    if (unlockedProducts != null) {
+      this.unlockedProducts = unlockedProducts;
+    } else {
+      this.unlockedProducts = [];
+    
+    }
+  
   }
 
   /// Checks if all product demands are fulfilled.
@@ -77,17 +98,14 @@ class City {
   }
 
   /// Unlocks a product in the city.
-  void unlockProduct(String product) {
-    if (!warehouse.storedProducts.containsKey(product)) {
-      warehouse.storedProducts[product] = 0;
-      print("$product unlocked in $name.");
-    }
+  void unlockProduct(Product product) {
+    unlockedProducts.add(product);
   }
-  isPurchased() {
+  bool isPurchased() {
     return isThisCityPurchased;
   }
 
-  setPurchased() {
+  void setPurchased() {
     isThisCityPurchased = true;
   }
 
@@ -98,7 +116,9 @@ class City {
       'isThisCityPurchased': isThisCityPurchased,
       'level': level,
       'productDemands': productDemands,
-      'warehouse': warehouse.toJson(),
+      'warehouse': warehouses,
+      'trucks': trucks,
+      'unlockedProducts': unlockedProducts
     };
   }
 
@@ -124,17 +144,30 @@ class City {
       throw ArgumentError(
           'City fromJson json parameter warehouse cannot be null.');
     }
+    if (json['trucks'] == null) {
+      throw ArgumentError('City fromJson json parameter trucks cannot be null.');
+    }
+    if (json['unlockedProducts'] == null) {
+      throw ArgumentError(
+          'City fromJson json parameter unlockedProducts cannot be null.');
+    }
     return City(
       name: json['name'],
       price: json['price'],
       isThisCityPurchased: json['isThisCityPurchased'],
       level: json['level'],
       productDemands: json['productDemands'] != null
-          ? Map<String, int>.from(json['productDemands'])
+          ? Map<Product, int>.from(json['productDemands'])
           : {},
-      warehouse: json['warehouse'] != null
-          ? Warehouse.fromJson(json['warehouse'])
-          : Warehouse(cityName: json['name'], level: 1, storedProducts: {}, waitUntilFullPerProduct: {}),
+      warehouses: json['warehouse'] != null
+          ? List<Warehouse>.from(json['warehouse'].map((x) => Warehouse.fromJson(x)))
+          : [],
+      trucks: json['trucks'] != null
+          ? List<Truck>.from(json['trucks'].map((x) => Truck.fromJson(x)))
+          : [],
+      unlockedProducts: json['unlockedProducts'] != null
+          ? List<Product>.from(json['unlockedProducts'].map((x) => Product.fromJson(x)))
+          : [],
     );
   }
   

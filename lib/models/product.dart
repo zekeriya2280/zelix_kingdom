@@ -8,6 +8,7 @@ class Product {
   DateTime? startTime;
   int amount = 0;
   int remainingTime = 0;
+  bool unlocked = false;
 
   Product({
     required this.id,
@@ -18,6 +19,7 @@ class Product {
     this.startTime,
     this.amount = 0,
     this.remainingTime = 0,
+    this.unlocked = false,
   });
 
   // JSON'dan Product modeline dönüşüm
@@ -33,6 +35,7 @@ class Product {
           : null,
       amount: json['amount'] ?? 0,
       remainingTime: json['remainingTime'] ?? 0,
+      unlocked: json['unlocked'] ?? false,
     );
   }
 
@@ -47,6 +50,7 @@ class Product {
       'startTime': startTime?.toIso8601String(),
       'amount': amount,
       'remainingTime': remainingTime,
+      'unlocked': unlocked,
     };
   }
 
@@ -60,6 +64,7 @@ class Product {
       startTime: startTime ?? this.startTime,
       amount: amount,
       remainingTime: remainingTime,
+      unlocked: unlocked,
     );
   }
   bool isMoneyEnough(double userMoney) {

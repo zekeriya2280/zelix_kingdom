@@ -5,14 +5,14 @@ import 'package:zelix_kingdom/managements/productmanagements.dart';
 import 'package:zelix_kingdom/models/product.dart';
 import 'package:vector_math/vector_math_64.dart' as vectorMath;
 
-class Allproducts extends StatefulWidget {
-  const Allproducts({super.key});
+class Techtree extends StatefulWidget {
+  const Techtree({super.key});
 
   @override
-  State<Allproducts> createState() => _AllproductsState();
+  State<Techtree> createState() => _TechtreeState();
 }
 
-class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin{  
+class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{  
   late AnimationController _animationController;
   late Animation<double> _rotationAnimation;
   CollectionReference allproducts = FirebaseFirestore.instance.collection(
@@ -47,7 +47,6 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
   @override
   void dispose() {
     _animationController.dispose();
-
     super.dispose();
   }
 
@@ -194,11 +193,9 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
                                   SizedBox(height: 5),
                                   Text('Is Producing:  ${product.isProducing}'),
                                   SizedBox(height: 5),
-                                  Text(
-                                    'Purchase Price:  ${product.purchasePrice}',
-                                  ),
+                                  Text('Price:   ${product.purchasePrice}'),
                                   SizedBox(height: 5),
-                                  Text('Unlocked:  ${product.unlocked}'),
+                                  Text('Unlocked:   ${product.unlocked}'),
                                 ],
                               ),
                               actions: [

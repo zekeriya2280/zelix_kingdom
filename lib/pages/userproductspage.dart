@@ -193,6 +193,10 @@ class ProductionPageState extends State<ProductionPage>
                                   Text('Amount:   ${product.amount}'),
                                   SizedBox(height: 5),
                                   Text('Is Producing:  ${product.isProducing}'),
+                                  SizedBox(height: 5),
+                                  Text('Purchase Price:   ${product.purchasePrice}'),
+                                  SizedBox(height: 5),
+                                  Text('Unlocked:   ${product.unlocked}'),
                                 ],
                               ),
                               actions: [
