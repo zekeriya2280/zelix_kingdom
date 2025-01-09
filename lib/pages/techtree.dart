@@ -120,23 +120,13 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
                 (index) => const Color.fromARGB(255, 240, 158, 34),
               );
               final product = products[index]; // Mevcut ürün
-              //addingProduct = { for (int i = 0; i < products.length; i++) i: false };
-
-              // cardColors.map((color) {
-              //print('Adding Product: ${addingProduct}');
               addingProduct.forEach((index, value) {
-                //print('Index: ${addingProduct[index]}');
                 if (addingProduct[index] == true) {
                   cardColors[index] = Colors.green;
                 } else {
                   cardColors[index] = const Color.fromARGB(255, 240, 158, 34);
                 }
               });
-              // }).toList();
-
-            // print(
-            //   'Card Color: ${cardColors.map((e) => e.toARGB32()).toList()}',
-            // );
               return SingleChildScrollView(
                 child: InkWell(
                   onTap:
@@ -298,7 +288,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
                                     product,
                                   );
                             },
-                            child: const Text('Add'),
+                            child: const Text('Unlock'),
                           ),
                         ),
                       ),

@@ -98,6 +98,13 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
               161,
             ), // Mavi arka plan
             actions: [
+              
+              IconButton(
+                icon: const Icon(Icons.list_alt, color: Colors.white),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/techtree');
+                },
+              ),
               IconButton(
                 icon: const Icon(Icons.shopping_cart, color: Colors.white),
                 onPressed: () {
@@ -121,10 +128,7 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
                 (index) => const Color.fromARGB(255, 240, 158, 34),
               );
               final product = products[index]; // Mevcut ürün
-              //addingProduct = { for (int i = 0; i < products.length; i++) i: false };
-
-              // cardColors.map((color) {
-              //print('Adding Product: ${addingProduct}');
+              //addingProduct = {for (int i = 0; i < products.length; i++) i: false};
               addingProduct.forEach((index, value) {
                 //print('Index: ${addingProduct[index]}');
                 if (addingProduct[index] == true) {
@@ -133,7 +137,7 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
                   cardColors[index] = const Color.fromARGB(255, 240, 158, 34);
                 }
               });
-              // }).toList();
+              print('addingProduct: $addingProduct');
 
             // print(
             //   'Card Color: ${cardColors.map((e) => e.toARGB32()).toList()}',

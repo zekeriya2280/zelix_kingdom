@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:zelix_kingdom/auth/signup.dart';
 import 'package:zelix_kingdom/intro.dart';
 import 'package:zelix_kingdom/pages/allproducts.dart';
+import 'package:zelix_kingdom/pages/techtree.dart';
 import 'package:zelix_kingdom/pages/userproductspage.dart';
 
 Future<void> main() async {
@@ -53,7 +54,8 @@ class MyApp extends StatelessWidget {
         '/intro': (context) => const IntroScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/userproducts': (context) => const ProductionPage(),
-        '/allproducts': (context) => const Allproducts()
+        '/allproducts': (context) => const Allproducts(),
+        '/techtree': (context) => const Techtree(),
       },
     );
   }
