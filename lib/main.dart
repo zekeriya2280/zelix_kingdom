@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/userproducts': (context) => const ProductionPage(),
         '/allproducts': (context) => const Allproducts(),
-        '/techtree': (context) => const Techtree(),
+        '/techtree': (context) => Techtree(products: []),
       },
     );
   }

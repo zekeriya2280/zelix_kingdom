@@ -6,7 +6,8 @@ import 'package:zelix_kingdom/models/product.dart';
 import 'package:vector_math/vector_math_64.dart' as vectorMath;
 
 class Techtree extends StatefulWidget {
-  const Techtree({super.key});
+  final List<Product> products;
+  const Techtree({super.key, required this.products});
 
   @override
   State<Techtree> createState() => _TechtreeState();
@@ -26,6 +27,8 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
   @override
   void initState() {
     findusermoney();
+    setProducts();
+    print(products);
     addingProduct = {for (int i = 0; i < products.length; i++) i: false};
     _productManagement = ProductManagement();
     _animationController = AnimationController(
@@ -48,6 +51,11 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+  setProducts() {
+    setState(() {
+      products = widget.products;
+    });
   }
 
   @override
@@ -203,12 +211,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
                                   onPressed: () => Navigator.pop(context),
                                 ),
                               ],
-                              backgroundColor: const Color.fromARGB(
-                                222,
-                                34,
-                                61,
-                                102,
-                              ),
+                              backgroundColor: const Color.fromARGB(210, 62, 96, 146),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
@@ -264,7 +267,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
                             ),
                           ),
                           subtitle: Text(
-                            'Time: ${product.productionTime}s, Amount: ${product.amount}, Price: ${product.purchasePrice.toInt()}\$',
+                            'Time: ${product.productionTime}s, Price: ${product.purchasePrice.toInt()}\$',
                             style: GoogleFonts.lato(
                               color: Colors.white,
                               fontSize: 12,
@@ -273,7 +276,10 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
                               wordSpacing: 1.5,
                             ),
                           ),
-                          trailing: ElevatedButton(
+                          trailing: product.unlocked == true ? Padding(
+                            padding: const EdgeInsets.only(right: 18.0),
+                            child: const Icon(Icons.lock_open, color: Colors.white,size: 30,),
+                          ) : ElevatedButton(
                             onPressed:  addingProduct[index] == true ? null : () async {
                               setState(() {
                                 addingProduct[index] = true;

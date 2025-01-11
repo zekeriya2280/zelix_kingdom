@@ -102,7 +102,7 @@ class _AllproductsState extends State<Allproducts> with TickerProviderStateMixin
               IconButton(
                 icon: const Icon(Icons.list_alt, color: Colors.white),
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/techtree');
+                  Navigator.pushReplacementNamed(context, '/techtree', arguments: {'products': products});
                 },
               ),
               IconButton(
