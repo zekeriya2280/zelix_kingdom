@@ -63,7 +63,7 @@ class _IntroScreenState extends State<IntroScreen> {
                 alignment: Alignment.center,
               ),
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(context, '/allproducts', (route) => false);
+                Navigator.pushNamedAndRemoveUntil(context, '/techtree', (route) => false);
               },
               child: Text('Game', style: GoogleFonts.roboto(
                 fontSize: 24.0,

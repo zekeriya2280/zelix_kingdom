@@ -1,13 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:zelix_kingdom/managements/productmanagements.dart';
 import 'package:zelix_kingdom/models/product.dart';
 import 'package:vector_math/vector_math_64.dart' as vectorMath;
+import 'package:zelix_kingdom/providers/productsprovider.dart';
 
 class Techtree extends StatefulWidget {
-  final List<Product> products;
-  const Techtree({super.key, required this.products});
+  const Techtree({super.key});
 
   @override
   State<Techtree> createState() => _TechtreeState();
@@ -16,20 +17,15 @@ class Techtree extends StatefulWidget {
 class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{  
   late AnimationController _animationController;
   late Animation<double> _rotationAnimation;
-  CollectionReference allproducts = FirebaseFirestore.instance.collection(
-    'products',
-  );
   List<Product> products = []; // Ürünler
   ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
-  Map<int, bool> addingProduct = {}; // Ürün ekleme durumu kontrolü
   double userMoney = 0;
+  List<int> productIndexes = [];
 
   @override
   void initState() {
     findusermoney();
-    setProducts();
-    print(products);
-    addingProduct = {for (int i = 0; i < products.length; i++) i: false};
+    productIndexes = List.generate(99, (index) => -1);
     _productManagement = ProductManagement();
     _animationController = AnimationController(
       vsync: this,
@@ -43,47 +39,27 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
     super.initState();
   }
   Future<void> findusermoney() async {
-    await _productManagement.findusermoney().then((value) => setState(() {
-        userMoney = value;
-      }));
-  }
+  await _productManagement.findusermoney().then(
+    (value) {
+      if (mounted) {
+        setState(() {
+          userMoney = value;
+        });
+      }
+    },
+  );
+}
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-  setProducts() {
-    setState(() {
-      products = widget.products;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot<Object?>>(
-      stream: allproducts.snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 1000,
-            ),
-          );
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('An error occurred.'));
-        }
-        products =
-            snapshot.data!.docs
-                .map(
-                  (doc) => Product.fromJson(doc.data() as Map<String, dynamic>),
-                )
-                .toList();
-        return Scaffold(
+    products = Provider.of<ProductProvider>(context, listen: false).products;
+   
+    return Scaffold(
           backgroundColor: const Color.fromARGB(255, 190, 198, 203),
           appBar: AppBar(
              leading: Padding(
@@ -94,7 +70,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
               ),
             ),
             title: Text(
-              'Production',
+              'Tech Tree',
               style: GoogleFonts.lato(color: Colors.white),
             ), // Başlık
             centerTitle: true,
@@ -105,6 +81,12 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
               161,
             ), // Mavi arka plan
             actions: [
+              IconButton(
+                icon: const Icon(Icons.list_alt, color: Colors.white),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/allproducts');
+                },
+              ),
               IconButton(
                 icon: const Icon(Icons.shopping_cart, color: Colors.white),
                 onPressed: () {
@@ -128,13 +110,6 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
                 (index) => const Color.fromARGB(255, 240, 158, 34),
               );
               final product = products[index]; // Mevcut ürün
-              addingProduct.forEach((index, value) {
-                if (addingProduct[index] == true) {
-                  cardColors[index] = Colors.green;
-                } else {
-                  cardColors[index] = const Color.fromARGB(255, 240, 158, 34);
-                }
-              });
               return SingleChildScrollView(
                 child: InkWell(
                   onTap:
@@ -280,13 +255,16 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
                             padding: const EdgeInsets.only(right: 18.0),
                             child: const Icon(Icons.lock_open, color: Colors.white,size: 30,),
                           ) : ElevatedButton(
-                            onPressed:  addingProduct[index] == true ? null : () async {
+                            style: ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.white)),
+                            onPressed: productIndexes[index] != -1 ? null : () async {
+                              print(productIndexes);
                               setState(() {
-                                addingProduct[index] = true;
+                                productIndexes.map((index) => index = -1);
+                                productIndexes[index] = index;
                               });
                               Future.delayed(const Duration(seconds: 2), () {
                                 setState(() {
-                                  addingProduct[index] = false;
+                                  productIndexes.map((index) => index = -1);
                                 });
                               });
                               await _productManagement
@@ -308,7 +286,5 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin{
             },
           ),
         );
-      },
-    );
-  }
+      }
 }
