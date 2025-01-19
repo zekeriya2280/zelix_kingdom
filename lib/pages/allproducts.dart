@@ -22,7 +22,6 @@ class _AllproductsState extends State<Allproducts>
   Map<int, bool> addingProduct = {}; // Ürün ekleme durumu kontrolü
   double userMoney = 0;
   List<Product> unlockedProducts = [];
-  bool breakadding = true;
   List<Color> cardColors = List.generate(
     99,
     (index) => const Color.fromARGB(255, 240, 158, 34),
@@ -57,9 +56,6 @@ void didChangeDependencies() {
       for (int i = 0; i < unlockedProducts.length; i++) i: false,
     };
     print('addingProduct: $addingProduct');
-    setState(() {
-      breakadding = true;
-    });
   }
 
  Future<void> findusermoney() async {
@@ -83,12 +79,6 @@ void didChangeDependencies() {
 
   @override
   Widget build(BuildContext context) {
-   
-    print(breakadding);
-    if (breakadding) {
-     //addingProduct = {
-     //  for (int i = 0; i < unlockedProducts.length; i++) i: false,
-     //};
        
       cardColors = List.generate(
         unlockedProducts.length,
@@ -102,9 +92,6 @@ void didChangeDependencies() {
           cardColors[index] = const Color.fromARGB(255, 240, 158, 34);
         }
       });
-     
-      breakadding = false;
-    }
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 190, 198, 203),
@@ -310,6 +297,8 @@ void didChangeDependencies() {
                                               });
                                             },
                                           );
+                                          print('addingProduct: $addingProduct');
+                                          
                                           await _productManagement
                                               .addSelectedProductFromAllProductsToUserFBProducts(
                                                 product,

@@ -97,6 +97,12 @@ Future<void> addSelectedProductFromAllProductsToUserFBProducts(Product product) 
         }
       });
 }
+setProductUnlocked(Product product) async {
+  await _db
+      .collection('products')
+      .doc(product.id)
+      .update({'unlocked': true});
+}
  Future<void> addProductsToFirestore() async { // Ürünleri PRODUCTS a ekler // RESET ............................................
     final allproducts = _db.collection('products');
     try {
