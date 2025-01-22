@@ -2,7 +2,6 @@ import 'dart:async'; // Stream için gerekli
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart'; // Flutter UI bileşen
-import 'package:zelix_kingdom/managements/productmanagements.dart'; // Ürün yönetimi
 import 'package:zelix_kingdom/models/product.dart'; // Ürün modeli
 import 'package:google_fonts/google_fonts.dart'; // Özel fontlar
 import 'package:intl/intl.dart'; // Date formatting
@@ -17,7 +16,7 @@ class ProductionPage extends StatefulWidget {
 
 class ProductionPageState extends State<ProductionPage>
     with TickerProviderStateMixin {
-  ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   Timer? _timer; // Zamanlayıcı
   List<Product> products = []; // Ürünler
   CollectionReference users = FirebaseFirestore.instance.collection('users');
@@ -27,7 +26,7 @@ class ProductionPageState extends State<ProductionPage>
 
   @override
   void initState() {
-    _productManagement = ProductManagement();
+    //_productManagement = ProductManagement();
     findusermoney();
     super.initState();
   }
@@ -67,6 +66,50 @@ class ProductionPageState extends State<ProductionPage>
     super.didChangeDependencies();
     _navigator = Navigator.of(context);
   }
+   Future<void> updateUserProductsInFirebase(Product product) async {
+  await _db
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+        'products.${product.id}': {
+          'remainingTime': product.remainingTime,
+          'isProducing': product.isProducing,
+          'startTime': product.startTime,
+          'id': product.id,
+          'purchasePrice': product.purchasePrice,
+          'name': product.name,
+          'productionTime': product.productionTime,
+          'amount': product.amount,
+          'unlocked': product.unlocked
+        }
+      });
+}
+ Future<void> updateUserMoneyInFirebase(double money) async {
+  await _db
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+        'money': money
+      });
+}
+Future<void> syncProductsToUserFirebaseAndIncreaseAmount(Product product) async {
+  await _db
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+        'products.${product.id}': {
+          'name': product.name,
+          'productionTime': product.productionTime,
+          'isProducing': false,
+          'startTime': null,
+          'id': product.id,
+          'purchasePrice': product.purchasePrice,
+          'amount': product.amount + 1,
+          'remainingTime': 0,
+          'unlocked': product.unlocked
+        }
+      });
+}
 
   @override
   void dispose() {
@@ -295,8 +338,7 @@ class ProductionPageState extends State<ProductionPage>
                                     product.remainingTime = 999;
                                     _timer?.cancel();
                                   });
-                                  await _productManagement
-                                      .updateUserProductsInFirebase(product);
+                                  await updateUserProductsInFirebase(product);
                                 },
                               )
                               : ElevatedButton(
@@ -335,23 +377,19 @@ class ProductionPageState extends State<ProductionPage>
                                                       userMoney -=
                                                           product.purchasePrice;
                                                     });
-                                                    await _productManagement
-                                                        .syncProductsToUserFirebaseAndIncreaseAmount(
+                                                    await syncProductsToUserFirebaseAndIncreaseAmount(
                                                           product,
                                                         );
-                                                    await _productManagement
-                                                        .updateUserMoneyInFirebase(
+                                                    await updateUserMoneyInFirebase(
                                                           userMoney,
                                                         );
                                                   //NavigatorState? navigator =
                                                   //    Navigator.of(context);
                                                   //// ...
-                                                    await _productManagement
-                                                        .syncProductsToUserFirebaseAndIncreaseAmount(
+                                                    await syncProductsToUserFirebaseAndIncreaseAmount(
                                                           product,
                                                         );
-                                                    await _productManagement
-                                                        .updateUserMoneyInFirebase(
+                                                    await updateUserMoneyInFirebase(
                                                           userMoney,
                                                         );
                                                     if (_navigator != null) {
@@ -359,8 +397,7 @@ class ProductionPageState extends State<ProductionPage>
                                                           '/userproducts');
                                                     }
                                                   } else {
-                                                    await _productManagement
-                                                        .updateUserProductsInFirebase(
+                                                    await updateUserProductsInFirebase(
                                                           product,
                                                         );
                                                   }

@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:zelix_kingdom/managements/productmanagements.dart';
+import 'package:zelix_kingdom/models/city.dart';
+import 'package:zelix_kingdom/models/factory.dart';
+import 'package:zelix_kingdom/models/product.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -27,7 +30,7 @@ class SignUpScreenState extends State<SignUpScreen> {
           final user = result.user;
           if (user != null) {
             await user.updateDisplayName(nicknameController.text);
-            await ProductManagement().signUpToFirebaseUsers(
+            await signUpToFirebaseUsers(
                 user.uid, nicknameController.text, emailController.text, {}, {}, {});
             if (mounted) {
               Navigator.pushNamed(context, '/intro');
@@ -62,6 +65,40 @@ class SignUpScreenState extends State<SignUpScreen> {
           content: Text("Bir hata oluştu."),
         ));
       }
+    }
+  }
+   Future<void> signUpToFirebaseUsers(
+      String id,
+      String nickname,
+      String email,
+      Map<Factory, int> factories,
+      Map< String , Product > products,
+      Map<City, int> cities) async {
+    if ([id, nickname, email].any((element) => element.isEmpty)) {
+      print('Invalid input: all fields must be non-empty.');
+      return;
+    }
+    try {
+      final userData = {
+        'id': id,
+        'nickname': nickname,
+        'email': email,
+        'money': 1000,
+        'factories': factories,
+        'products': products,
+        'cities': cities
+      };
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(id)
+          .set(userData);
+      print('User successfully created.');
+    } on FirebaseException catch (e) {
+      print(e.code == 'permission-denied'
+          ? 'Permission denied: $e'
+          : 'Error creating user: $e');
+    } catch (e) {
+      print('An unexpected error occurred: $e');
     }
   }
 

@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zelix_kingdom/auth/signup.dart';
-import 'package:zelix_kingdom/managements/productmanagements.dart';
-//import 'package:zelix_empire/firebase/fbcontroller.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
@@ -14,13 +12,54 @@ class IntroScreen extends StatefulWidget {
 
 class _IntroScreenState extends State<IntroScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
+  //ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
   @override
   void initState() {
-    _productManagement = ProductManagement(); // Ürün yönetimi
+   // _productManagement = ProductManagement(); // Ürün yönetimi
     //_productManagement.addProductsToFirestore(); // Ürünleri products a ekler // RESET
     super.initState();
   }
+ //  Future<void> addProductsToFirestore() async { // Ürünleri PRODUCTS a ekler // RESET ............................................
+ //   final allproducts = _db.collection('products');
+ //   try {
+ //     final snapshot = await allproducts.get();
+ //     final oldproducts = snapshot.docs.isEmpty ? [] : snapshot.docs.map((doc) => Product.fromJson(doc.data())).toList();
+ //     //if (snapshot.docs.isNotEmpty) {
+ //       // Mevcut ürünler yoksa, yeni ürünleri ekleyin
+ //       var newProducts = [
+ //         Product(
+ //           id: Random().nextInt(1000000000).toString(),
+ //           name: 'apple',
+ //           startTime: null,
+ //           isProducing: false, 
+ //           purchasePrice: 3000,
+ //           productionTime: Random().nextInt(100)+3,
+ //           remainingTime: Random().nextInt(100)+3, 
+ //           amount: 0,
+ //           unlocked: false,
+ //         ),
+ //         Product(
+ //           id: Random().nextInt(1000000000).toString(),
+ //           name: 'sand',
+ //           productionTime: Random().nextInt(100)+3,
+ //           remainingTime: Random().nextInt(100)+3,
+ //           purchasePrice: 4000,
+ //           startTime: null,
+ //           isProducing: false,
+ //           amount: 0,
+ //           unlocked: false,
+ //         ),
+ //         // Daha fazla ürün ekleyebilirsiniz
+ //       ];  
+ //       newProducts =  oldproducts == [] ? newProducts : newProducts.where((product) => !oldproducts.any((oldproduct) => oldproduct.id == product.id)).toList();
+ //       for (final product in newProducts) {
+ //         await allproducts.doc(product.id).set(product.toJson());
+ //       }
+ //    // }
+ //   } catch (e) {
+ //     print('Error adding products to Firestore: $e');
+ //   }
+ // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
