@@ -1,13 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:zelix_kingdom/auth/login.dart';
 import 'package:zelix_kingdom/auth/signup.dart';
 import 'package:zelix_kingdom/intro.dart';
 import 'package:zelix_kingdom/pages/allproducts.dart';
 import 'package:zelix_kingdom/pages/techtree.dart';
 import 'package:zelix_kingdom/pages/userproductspage.dart';
-import 'package:zelix_kingdom/providers/productsprovider.dart';
 
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,11 +26,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
-      ],
-      child: MaterialApp(
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -48,7 +42,7 @@ class MyApp extends StatelessWidget {
           '/allproducts': (context) => Allproducts(),
           '/techtree': (context) => Techtree(),
         },
-      ),
-    );
+      );
+    
   }
 }

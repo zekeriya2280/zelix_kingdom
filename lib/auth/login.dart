@@ -23,7 +23,7 @@ class LoginScreenState extends State<LoginScreen> {
               email: emailController.text, password: passwordController.text)
           .catchError((error) {
         developer.log('Error logging in: ${error.toString()}', name: 'LoginScreen');
-        return null;
+        throw error;
       });
       if (userCredential.user == null) {
         developer.log('Error logging in: User is null', name: 'LoginScreen');
