@@ -8,12 +8,14 @@ class Product {
   DateTime? startTime;
   int amount = 0;
   int remainingTime = 0;
+  int productLevel;
   bool unlocked = false;
 
   Product({
     required this.id,
     required this.name,
     required this.productionTime,
+    required this.productLevel,
     this.isProducing = false,
      required this.purchasePrice,
     this.startTime,
@@ -28,6 +30,7 @@ class Product {
       id: json['id'],
       name: json['name'],
       productionTime: json['productionTime'],
+      productLevel: json['productLevel'],
       isProducing: json['isProducing'] ?? false,
       purchasePrice: json['purchasePrice'],
       startTime: json['startTime'] != null
@@ -45,6 +48,7 @@ class Product {
       'id': id,
       'name': name,
       'productionTime': productionTime,
+      'productLevel': productLevel,
       'isProducing': isProducing,
       'purchasePrice': purchasePrice,
       'startTime': startTime?.toIso8601String(),
@@ -59,6 +63,7 @@ class Product {
       id: id,
       name: name,
       productionTime: productionTime,
+      productLevel: productLevel,
       isProducing: isProducing,
       purchasePrice: purchasePrice,
       startTime: startTime ?? this.startTime,
@@ -67,6 +72,9 @@ class Product {
       unlocked: unlocked,
     );
   }
+  /// Checks if a user has enough money to purchase this product.
+  ///
+  /// Returns [true] if the user has enough money, [false] otherwise.
   bool isMoneyEnough(double userMoney) {
     return userMoney >= purchasePrice;
   }

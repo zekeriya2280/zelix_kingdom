@@ -181,6 +181,15 @@ class SignUpScreenState extends State<SignUpScreen> {
               style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
               child: const Text('Sign Up'),
             ),
+            TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                    );
+                  },
+                  child: const Text("Already have an account?     Login", style: TextStyle(color: Colors.orange,fontSize: 18, fontWeight: FontWeight.bold),),
+                ),
           ],
         ),
       ),
