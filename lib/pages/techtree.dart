@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zelix_kingdom/models/product.dart';
 import 'package:vector_math/vector_math_64.dart' as vectorMath;
+import 'package:zelix_kingdom/operators/appdata.dart';
 
 class Techtree extends StatefulWidget {
   const Techtree({super.key});
@@ -106,22 +107,23 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
         if (snapshot.hasError) {
           return const Center(child: Text('An error occurred.'));
         }
-        products =
-            snapshot.data!.docs
-                .map((doc) => Product.fromJson(doc.data()))
-                .toList();
+        products = (AppData().models['Product'] as List<dynamic>).cast<Product>();
+          //  snapshot.data!.docs
+          //      .map((doc) => Product.fromJson(doc.data()))
+          //      .toList();
         return Stack(
           children: [
-           Opacity(
-  opacity: 0.8, // Change this value to adjust the opacity (0.0 to 1.0)
-  child: Image(
-    image: AssetImage('assets/arkaplan2.jpeg'),
-    alignment: Alignment.center,
-    fit: BoxFit.cover,
-    width: double.infinity,
-    height: double.infinity,
-  ),
-),
+            Opacity(
+              opacity:
+                  0.8, // Change this value to adjust the opacity (0.0 to 1.0)
+              child: Image(
+                image: AssetImage('assets/arkaplan2.jpeg'),
+                alignment: Alignment.center,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(

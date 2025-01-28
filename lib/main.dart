@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zelix_kingdom/auth/login.dart';
 import 'package:zelix_kingdom/auth/signup.dart';
 import 'package:zelix_kingdom/intro.dart';
+import 'package:zelix_kingdom/operators/appdata.dart';
 import 'package:zelix_kingdom/pages/allproducts.dart';
 import 'package:zelix_kingdom/pages/techtree.dart';
 import 'package:zelix_kingdom/pages/userproductspage.dart';
@@ -18,6 +19,7 @@ void main()async {
       storageBucket: "zelix-kingdom.firebasestorage.app"
     )
   );
+  await AppData().loadData();
   runApp(MyApp());
 }
 
