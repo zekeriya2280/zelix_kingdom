@@ -3,7 +3,7 @@ import 'package:zelix_kingdom/models/factory.dart';
 import 'package:zelix_kingdom/models/product.dart';
 
 class Userconstants{
-  static Map<String, dynamic> createUserFirstInfos(
+  Map<String, dynamic> createUserFirstInfos(
       String id,
       String nickname,
       String email,

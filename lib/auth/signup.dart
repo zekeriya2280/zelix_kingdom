@@ -80,7 +80,7 @@ class SignUpScreenState extends State<SignUpScreen> {
       return;
     }
     try {
-      final userData = Userconstants.createUserFirstInfos(id, nickname, email, factories, products, cities);
+      final userData = Userconstants().createUserFirstInfos(id, nickname, email, factories, products, cities);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(id)

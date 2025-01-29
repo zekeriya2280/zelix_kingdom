@@ -76,7 +76,7 @@ class ProductionPageState extends State<ProductionPage>
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .update({
-          'products.${product.id}':  ProductConstants.createProductMapOnlyUpdateAll(product),
+          'products.${product.id}':  ProductConstants().createProductMapOnlyUpdateAll(product),
         });
   }
 
@@ -113,7 +113,7 @@ class ProductionPageState extends State<ProductionPage>
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .update({
-          'products.${product.id}': ProductConstants.createProductMapChangingIsProducingStartTimeAmountRemainingTime(product),
+          'products.${product.id}': ProductConstants().createProductMapChangingIsProducingStartTimeAmountRemainingTime(product),
         });
   }
 

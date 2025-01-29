@@ -1,7 +1,7 @@
 import 'package:zelix_kingdom/models/product.dart';
 
 class ProductConstants{ 
-  static Map<String, dynamic> createProductMapChangingIsProducingStartTimeAmountRemainingTime(Product product) {
+  Map<String, dynamic> createProductMapChangingIsProducingStartTimeAmountRemainingTime(Product product) {
   return {
     'name': product.name,
     'productionTime': product.productionTime,
@@ -15,7 +15,7 @@ class ProductConstants{
     'unlocked': product.unlocked,
   };
 }
-static Map<String, dynamic> createProductMapOnlyUpdateAll(Product product) {
+Map<String, dynamic> createProductMapOnlyUpdateAll(Product product) {
   return {
             'remainingTime': product.remainingTime,
             'isProducing': product.isProducing,
