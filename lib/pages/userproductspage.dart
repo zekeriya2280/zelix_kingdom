@@ -2,6 +2,7 @@ import 'dart:async'; // Stream için gerekli
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart'; // Flutter UI bileşen
+import 'package:zelix_kingdom/constants/productconstants.dart';
 import 'package:zelix_kingdom/models/product.dart'; // Ürün modeli
 import 'package:google_fonts/google_fonts.dart'; // Özel fontlar
 import 'package:intl/intl.dart'; // Date formatting
@@ -75,18 +76,7 @@ class ProductionPageState extends State<ProductionPage>
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .update({
-          'products.${product.id}': {
-            'remainingTime': product.remainingTime,
-            'isProducing': product.isProducing,
-            'startTime': product.startTime,
-            'productLevel': product.productLevel,
-            'id': product.id,
-            'purchasePrice': product.purchasePrice,
-            'name': product.name,
-            'productionTime': product.productionTime,
-            'amount': product.amount,
-            'unlocked': product.unlocked,
-          },
+          'products.${product.id}':  ProductConstants.createProductMapOnlyUpdateAll(product),
         });
   }
 
@@ -123,18 +113,7 @@ class ProductionPageState extends State<ProductionPage>
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .update({
-          'products.${product.id}': {
-            'name': product.name,
-            'productionTime': product.productionTime,
-            'productLevel': product.productLevel,
-            'isProducing': false,
-            'startTime': null,
-            'id': product.id,
-            'purchasePrice': product.purchasePrice,
-            'amount': product.amount + 1,
-            'remainingTime': 0,
-            'unlocked': product.unlocked,
-          },
+          'products.${product.id}': ProductConstants.createProductMapChangingIsProducingStartTimeAmountRemainingTime(product),
         });
   }
 

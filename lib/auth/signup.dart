@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:zelix_kingdom/constants/userconstants.dart';
 import 'package:zelix_kingdom/models/city.dart';
 import 'package:zelix_kingdom/models/factory.dart';
 import 'package:zelix_kingdom/models/product.dart';
@@ -79,15 +80,7 @@ class SignUpScreenState extends State<SignUpScreen> {
       return;
     }
     try {
-      final userData = {
-        'id': id,
-        'nickname': nickname,
-        'email': email,
-        'money': 1000,
-        'factories': factories,
-        'products': products,
-        'cities': cities
-      };
+      final userData = Userconstants.createUserFirstInfos(id, nickname, email, factories, products, cities);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(id)
