@@ -2,13 +2,13 @@ import 'dart:async'; // Stream için gerekli
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart'; // Flutter UI bileşen
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zelix_kingdom/constants/productconstants.dart';
 import 'package:zelix_kingdom/models/product.dart'; // Ürün modeli
 import 'package:google_fonts/google_fonts.dart'; // Özel fontlar
 import 'package:intl/intl.dart'; // Date formatting
 
 class ProductionPage extends StatefulWidget {
-  // Üretim sayfası
   const ProductionPage({super.key});
 
   @override
@@ -28,12 +28,11 @@ class ProductionPageState extends State<ProductionPage>
 
   @override
   void initState() {
-    //_productManagement = ProductManagement();
-    findusermoney();
+    findusermoneyAndUserproducts();
     super.initState();
   }
 
-  Future<void> findusermoney() async {
+  Future<void> findusermoneyAndUserproducts() async {
     final snapshot =
         await users.doc(FirebaseAuth.instance.currentUser!.uid).get();
     setState(() {
@@ -45,6 +44,7 @@ class ProductionPageState extends State<ProductionPage>
               .map((key, value) => MapEntry(key, Product.fromJson(value)))
               .values
               .toList();
+      products.sort((a, b) => a.productLevel.compareTo(b.productLevel));
     });
 
     if (!snapshot.exists) {
@@ -76,7 +76,8 @@ class ProductionPageState extends State<ProductionPage>
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .update({
-          'products.${product.id}':  ProductConstants().createProductMapOnlyUpdateAll(product),
+          'products.${product.id}': ProductConstants()
+              .createProductMapOnlyUpdateAll(product),
         });
   }
 
@@ -109,12 +110,28 @@ class ProductionPageState extends State<ProductionPage>
   Future<void> syncProductsToUserFirebaseAndIncreaseAmount(
     Product product,
   ) async {
-    await _db
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
-          'products.${product.id}': ProductConstants().createProductMapChangingIsProducingStartTimeAmountRemainingTime(product),
-        });
+    assert(product == null, 'Product cannot be null');
+    assert(
+      FirebaseAuth.instance.currentUser != null,
+      'User must be authenticated to sync products to Firebase',
+    );
+    try {
+      await _db
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+            'products.${product.id}': ProductConstants()
+                .createProductMapChangingIsProducingStartTimeAmountRemainingTime(
+                  product,
+                ),
+          });
+    } on FirebaseException catch (e) {
+      print('Error syncing products to Firebase: $e');
+      rethrow;
+    } catch (e) {
+      print('An unexpected error occurred: $e');
+      rethrow;
+    }
   }
 
   @override
@@ -151,15 +168,16 @@ class ProductionPageState extends State<ProductionPage>
         return Stack(
           children: [
             Opacity(
-  opacity: 0.8, // Change this value to adjust the opacity (0.0 to 1.0)
-  child: Image(
-    image: AssetImage('assets/arkaplan4.jpeg'),
-    alignment: Alignment.center,
-    fit: BoxFit.cover,
-    width: double.infinity,
-    height: double.infinity,
-  ),
-),
+              opacity:
+                  0.8, // Change this value to adjust the opacity (0.0 to 1.0)
+              child: Image(
+                image: AssetImage('assets/arkaplan4.jpeg'),
+                alignment: Alignment.center,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(
@@ -190,7 +208,28 @@ class ProductionPageState extends State<ProductionPage>
                   ),
                 ],
               ),
-
+              bottomNavigationBar: BottomNavigationBar(
+                backgroundColor: const Color.fromARGB(
+                  210,
+                  13,
+                  72,
+                  161,
+                ),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.industry, color: Colors.white, size: 30),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.truck, color: Colors.white, size: 30),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.city, color: Colors.white, size: 30),
+                    label: '',
+                  ),
+                ],
+              ),
               body: ListView.builder(
                 padding: const EdgeInsets.all(4.0),
                 itemCount: products.length, // Ürün sayısı
@@ -360,7 +399,7 @@ class ProductionPageState extends State<ProductionPage>
                                     ),
                                   )
                                   : Text(
-                                    'Time: ${product.productionTime}s, Amount: ${product.amount}, Price: ${product.purchasePrice.toInt()}\$',
+                                    'Time: ${product.productionTime}s \nAmount: ${product.amount} \nPrice: ${product.purchasePrice.toInt()}\$ \nLevel: ${product.productLevel}',
                                     overflow: TextOverflow.clip,
                                     style: GoogleFonts.lato(
                                       color: Colors.white,
@@ -429,9 +468,6 @@ class ProductionPageState extends State<ProductionPage>
                                                               product
                                                                   .purchasePrice;
                                                         });
-                                                        await syncProductsToUserFirebaseAndIncreaseAmount(
-                                                          product,
-                                                        );
                                                         await syncProductsToUserFirebaseAndIncreaseAmount(
                                                           product,
                                                         );

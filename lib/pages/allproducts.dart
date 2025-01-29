@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zelix_kingdom/models/product.dart';
 import 'package:vector_math/vector_math_64.dart' as vectorMath;
@@ -18,13 +19,14 @@ class _AllproductsState extends State<Allproducts>
   late AnimationController _animationController;
   late Animation<double> _rotationAnimation;
   List<Product> products = []; // Ürünler
-  Map<int, bool> addingProduct = {}; // Ürün ekleme durumu kontrolü
+  //Map<int, bool> addingProduct = {}; // Ürün ekleme durumu kontrolü
   double userMoney = 0;
+  int selectedindex = -1;
   List<Product> unlockedProducts = [];
-  List<Color> cardColors = List.generate(
-    99,
-    (index) => const Color.fromARGB(255, 240, 158, 34),
-  );
+  //List<Color> cardColors = List.generate(
+  //  99,
+  //  (index) => const Color.fromARGB(255, 240, 158, 34),
+  //);
   CollectionReference<Map<String, dynamic>> productsRef = FirebaseFirestore
       .instance
       .collection('products');
@@ -125,22 +127,24 @@ class _AllproductsState extends State<Allproducts>
                   .toList();
           unlockedProducts =
               products.where((product) => product.unlocked).toList();
-          addingProduct = {
-            for (int i = 0; i < unlockedProducts.length; i++) i: false,
-          };
+          unlockedProducts.sort((a, b) => a.productLevel.compareTo(b.productLevel));
+          //addingProduct = {
+          //  for (int i = 0; i < unlockedProducts.length; i++) i: false,
+          //};
         }
         return Stack(
           children: [
             Opacity(
-  opacity: 0.8, // Change this value to adjust the opacity (0.0 to 1.0)
-  child: Image(
-    image: AssetImage('assets/arkaplan3.jpeg'),
-    alignment: Alignment.center,
-    fit: BoxFit.cover,
-    width: double.infinity,
-    height: double.infinity,
-  ),
-),
+              opacity:
+                  0.8, // Change this value to adjust the opacity (0.0 to 1.0)
+              child: Image(
+                image: AssetImage('assets/arkaplan3.jpeg'),
+                alignment: Alignment.center,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(
@@ -183,6 +187,28 @@ class _AllproductsState extends State<Allproducts>
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/intro');
                     },
+                  ),
+                ],
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                backgroundColor: const Color.fromARGB(
+                  210,
+                  13,
+                  72,
+                  161,
+                ),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.industry, color: Colors.white, size: 30),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.truck, color: Colors.white, size: 30),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.city, color: Colors.white, size: 30),
+                    label: '',
                   ),
                 ],
               ),
@@ -337,9 +363,14 @@ class _AllproductsState extends State<Allproducts>
                                   origin: const Offset(45, 10),
                                   child: Card(
                                     color:
-                                        addingProduct[index] == true
+                                        index == selectedindex
                                             ? Colors.green
-                                            : cardColors[index],
+                                            : const Color.fromARGB(
+                                              255,
+                                              240,
+                                              158,
+                                              34,
+                                            ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     ),
@@ -356,7 +387,7 @@ class _AllproductsState extends State<Allproducts>
                                         ),
                                       ),
                                       subtitle: Text(
-                                        'Time: ${product.productionTime}s, Amount: ${product.amount}, Price: ${product.purchasePrice.toInt()}\$',
+                                        'Time: ${product.productionTime}s \nAmount: ${product.amount} \nPrice: ${product.purchasePrice.toInt()}\$ \nLevel: ${product.productLevel}',
                                         style: GoogleFonts.lato(
                                           color: Colors.white,
                                           fontSize: 12,
@@ -367,18 +398,17 @@ class _AllproductsState extends State<Allproducts>
                                       ),
                                       trailing: ElevatedButton(
                                         onPressed:
-                                            addingProduct[index] == true
+                                            index == selectedindex
                                                 ? null
                                                 : () async {
                                                   setState(() {
-                                                    addingProduct[index] = true;
+                                                    selectedindex = index;
                                                   });
                                                   Future.delayed(
                                                     const Duration(seconds: 2),
                                                     () {
                                                       setState(() {
-                                                        addingProduct[index] =
-                                                            false;
+                                                        selectedindex = -1;
                                                       });
                                                     },
                                                   );

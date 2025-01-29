@@ -41,6 +41,8 @@ dependencies:
   flutter_animate: ^4.5.2
   intl: ^0.20.1
   vector_math: ^2.1.4
+  font_awesome_flutter:
+  flutter_svg:
 
 dev_dependencies:
   flutter_test:

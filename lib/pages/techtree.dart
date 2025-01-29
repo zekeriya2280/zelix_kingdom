@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zelix_kingdom/models/product.dart';
 import 'package:vector_math/vector_math_64.dart' as vectorMath;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Techtree extends StatefulWidget {
   const Techtree({super.key});
@@ -21,7 +22,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
   //ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
   double userMoney = 0;
   List<int> productIndexes = [];
-  List<bool> changing = List.generate(99, (index) => false);
+  int selectedindex = -1;
   CollectionReference<Map<String, dynamic>> productsRef = FirebaseFirestore
       .instance
       .collection('products');
@@ -92,23 +93,22 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: productsRef.snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
-        }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(
+              backgroundColor: Colors.white,
               color: Colors.white,
-              strokeWidth: 1000,
+              strokeWidth: 10,
             ),
           );
         }
         if (snapshot.hasError) {
           return const Center(child: Text('An error occurred.'));
         }
-        products = snapshot.data!.docs
-               .map((doc) => Product.fromJson(doc.data()))
-               .toList();
+        products =
+            snapshot.data!.docs
+                .map((doc) => Product.fromJson(doc.data()))
+                .toList();
         return Stack(
           children: [
             Opacity(
@@ -161,6 +161,28 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/intro');
                     },
+                  ),
+                ],
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                backgroundColor: const Color.fromARGB(
+                  210,
+                  13,
+                  72,
+                  161,
+                ),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.industry, color: Colors.white, size: 30),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.truck, color: Colors.white, size: 30),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.city, color: Colors.white, size: 30),
+                    label: '',
                   ),
                 ],
               ),
@@ -354,7 +376,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                         origin: const Offset(45, 10),
                                         child: Card(
                                           color:
-                                              changing[index]
+                                              selectedindex != -1
                                                   ? Colors.green
                                                   : const Color.fromARGB(
                                                     255,
@@ -380,7 +402,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                               ),
                                             ),
                                             subtitle: Text(
-                                              'Time: ${product.productionTime}s, Price: ${product.purchasePrice.toInt()}\$',
+                                              'Time: ${product.productionTime}s \nPrice: ${product.purchasePrice.toInt()}\$ \nLevel: ${product.productLevel}',
                                               style: GoogleFonts.lato(
                                                 color: Colors.white,
                                                 fontSize: 12,
@@ -410,26 +432,28 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                             >(Colors.white),
                                                       ),
                                                       onPressed: () async {
+                                                        print('starting selected $selectedindex');
                                                         setState(() {
-                                                          changing[index] =
-                                                              true;
+                                                          selectedindex = index;
                                                           // times[index] = DateTime.now();
                                                         });
-                                                        Future.delayed(
+                                                        await Future.delayed(
                                                           const Duration(
                                                             milliseconds: 1000,
                                                           ),
                                                           () async {
-                                                            changing[index] =
-                                                                false;
+                                                            setState(() {
+                                                              selectedindex = -1;
+                                                            });
                                                             await setProductUnlocked(
                                                               product,
                                                             );
                                                           },
                                                         );
+                                                        print('finished selected $selectedindex');
                                                       },
                                                       child:
-                                                          changing[index]
+                                                          selectedindex == index
                                                               ? const CircularProgressIndicator()
                                                               : const Text(
                                                                 'Unlock',
