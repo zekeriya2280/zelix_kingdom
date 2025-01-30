@@ -8,14 +8,14 @@ import 'package:zelix_kingdom/models/product.dart'; // Ürün modeli
 import 'package:google_fonts/google_fonts.dart'; // Özel fontlar
 import 'package:intl/intl.dart'; // Date formatting
 
-class ProductionPage extends StatefulWidget {
-  const ProductionPage({super.key});
+class FactoryPage extends StatefulWidget {
+  const FactoryPage({super.key});
 
   @override
-  ProductionPageState createState() => ProductionPageState();
+  FactoryPageState createState() => FactoryPageState();
 }
 
-class ProductionPageState extends State<ProductionPage>
+class FactoryPageState extends State<FactoryPage>
     with TickerProviderStateMixin {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   Timer? _timer; // Zamanlayıcı
@@ -45,6 +45,7 @@ class ProductionPageState extends State<ProductionPage>
               .values
               .toList();
       products.sort((a, b) => a.productLevel.compareTo(b.productLevel));
+      products = products.where((product) => product.amount > 0).toList();
     });
 
     if (!snapshot.exists) {
@@ -110,9 +111,7 @@ class ProductionPageState extends State<ProductionPage>
   Future<void> syncProductsToUserFirebaseAndIncreaseAmount(
     Product product,
   ) async {
-    if (product == null) {
-      return;
-    }
+    assert(product == null, 'Product cannot be null');
     assert(
       FirebaseAuth.instance.currentUser != null,
       'User must be authenticated to sync products to Firebase',
@@ -191,7 +190,7 @@ class ProductionPageState extends State<ProductionPage>
                   ),
                 ),
                 title: Text(
-                  'Owned Products',
+                  'Factory',
                   style: GoogleFonts.lato(color: Colors.white),
                 ), // Başlık
                 centerTitle: true,
@@ -202,11 +201,29 @@ class ProductionPageState extends State<ProductionPage>
                   161,
                 ), // Mavi arka plan
                 actions: [
-                  IconButton(
-                    icon: const Icon(Icons.home, color: Colors.white),
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/intro');
-                    },
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: IconButton(onPressed: () {}, 
+                    icon: GestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacementNamed(context, '/allproducts');
+                        },
+                        child: Icon(
+                          FontAwesomeIcons.bookBookmark,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: IconButton(
+                      icon: const Icon(Icons.home, color: Colors.white, size: 30),
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/intro');
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -221,10 +238,10 @@ class ProductionPageState extends State<ProductionPage>
                   BottomNavigationBarItem(
                     icon: GestureDetector(
                       onTap: () {
-                        Navigator.pushReplacementNamed(context, '/factory');
+                        Navigator.pushReplacementNamed(context, '/userproducts');
                       },
                       child: Icon(
-                        FontAwesomeIcons.industry,
+                        FontAwesomeIcons.shop,
                         color: Colors.white,
                         size: 30,
                       ),
@@ -479,12 +496,9 @@ class ProductionPageState extends State<ProductionPage>
                                                               product
                                                                   .purchasePrice;
                                                         });
-                                                        if (product != null) {
-                                                          await syncProductsToUserFirebaseAndIncreaseAmount(
-                                                           product,
-                                                          );
-                                                        }
-                                                        
+                                                        await syncProductsToUserFirebaseAndIncreaseAmount(
+                                                          product,
+                                                        );
                                                         await updateUserMoneyInFirebase(
                                                           userMoney,
                                                         );
@@ -509,7 +523,7 @@ class ProductionPageState extends State<ProductionPage>
                                                 });
                                               }
                                             },
-                                    child: const Text('Start'),
+                                    child: const Text('Use'),
                                   ),
                         ),
                       ),

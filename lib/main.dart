@@ -4,6 +4,7 @@ import 'package:zelix_kingdom/auth/login.dart';
 import 'package:zelix_kingdom/auth/signup.dart';
 import 'package:zelix_kingdom/intro.dart';
 import 'package:zelix_kingdom/pages/allproducts.dart';
+import 'package:zelix_kingdom/pages/factorypage.dart';
 import 'package:zelix_kingdom/pages/techtree.dart';
 import 'package:zelix_kingdom/pages/userproductspage.dart';
 
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
           '/userproducts': (context) => const ProductionPage(),
           '/allproducts': (context) => Allproducts(),
           '/techtree': (context) => Techtree(),
+          '/factory': (context) => FactoryPage(),
         },
       );
     

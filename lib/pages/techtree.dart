@@ -165,23 +165,35 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                 ],
               ),
               bottomNavigationBar: BottomNavigationBar(
-                backgroundColor: const Color.fromARGB(
-                  210,
-                  13,
-                  72,
-                  161,
-                ),
+                backgroundColor: const Color.fromARGB(210, 13, 72, 161),
                 items: [
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.industry, color: Colors.white, size: 30),
+                    icon: GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacementNamed(context, '/factory');
+                      },
+                      child: Icon(
+                        FontAwesomeIcons.industry,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
                     label: '',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.truck, color: Colors.white, size: 30),
+                    icon: Icon(
+                      FontAwesomeIcons.truck,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                     label: '',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.city, color: Colors.white, size: 30),
+                    icon: Icon(
+                      FontAwesomeIcons.city,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                     label: '',
                   ),
                 ],
@@ -432,7 +444,9 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                             >(Colors.white),
                                                       ),
                                                       onPressed: () async {
-                                                        print('starting selected $selectedindex');
+                                                        print(
+                                                          'starting selected $selectedindex',
+                                                        );
                                                         setState(() {
                                                           selectedindex = index;
                                                           // times[index] = DateTime.now();
@@ -443,14 +457,17 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                           ),
                                                           () async {
                                                             setState(() {
-                                                              selectedindex = -1;
+                                                              selectedindex =
+                                                                  -1;
                                                             });
                                                             await setProductUnlocked(
                                                               product,
                                                             );
                                                           },
                                                         );
-                                                        print('finished selected $selectedindex');
+                                                        print(
+                                                          'finished selected $selectedindex',
+                                                        );
                                                       },
                                                       child:
                                                           selectedindex == index

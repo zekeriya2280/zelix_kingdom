@@ -199,7 +199,16 @@ class _AllproductsState extends State<Allproducts>
                 ),
                 items: [
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.industry, color: Colors.white, size: 30),
+                    icon: GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacementNamed(context, '/factory');
+                      },
+                      child: Icon(
+                        FontAwesomeIcons.industry,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
                     label: '',
                   ),
                   BottomNavigationBarItem(
