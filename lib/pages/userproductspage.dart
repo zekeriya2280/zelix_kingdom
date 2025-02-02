@@ -110,9 +110,6 @@ class ProductionPageState extends State<ProductionPage>
   Future<void> syncProductsToUserFirebaseAndIncreaseAmount(
     Product product,
   ) async {
-    if (product == null) {
-      return;
-    }
     assert(
       FirebaseAuth.instance.currentUser != null,
       'User must be authenticated to sync products to Firebase',
@@ -479,12 +476,10 @@ class ProductionPageState extends State<ProductionPage>
                                                               product
                                                                   .purchasePrice;
                                                         });
-                                                        if (product != null) {
-                                                          await syncProductsToUserFirebaseAndIncreaseAmount(
-                                                           product,
-                                                          );
-                                                        }
-                                                        
+                                                        await syncProductsToUserFirebaseAndIncreaseAmount(
+                                                         product,
+                                                        );
+                                                                                                              
                                                         await updateUserMoneyInFirebase(
                                                           userMoney,
                                                         );
