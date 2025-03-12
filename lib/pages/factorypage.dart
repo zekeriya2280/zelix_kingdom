@@ -31,32 +31,74 @@ class FactoryPageState extends State<FactoryPage>
     findusermoneyAndUserproducts();
     super.initState();
   }
+  bool hasEnoughMaterials(Product product) {
+    if (product.requiredMaterials.isEmpty) return true;
+    for (var entry in product.requiredMaterials.entries) {
+      String materialId = entry.key;
+      int requiredAmount = entry.value;
+      
+      Product? material = products.firstWhere(
+        (p) => p.id == materialId
+      );
+      
+      if (material.amount < requiredAmount) return false;
+    }
+    return true;
+  }
+  void startProduction(Product product) async {
+  for (var entry in product.requiredMaterials.entries) {
+    String materialId = entry.key;
+    int requiredAmount = entry.value;
+    
+    Product material = products.firstWhere((p) => p.id == materialId);
+    setState(() => material.amount -= requiredAmount);
+    await updateUserProductsInFirebase(material);
+  }
+}
 
   Future<void> findusermoneyAndUserproducts() async {
-    final snapshot =
-        await users.doc(FirebaseAuth.instance.currentUser!.uid).get();
+    // Retrieve the user's document snapshot from Firestore
+    final snapshot = await users.doc(FirebaseAuth.instance.currentUser!.uid).get();
+    
+    // Update the state with the user's products and money information
     setState(() {
+      // Extract the 'products' field from the document data
       final temp1 = (snapshot.data()!)['products'];
+      
+      // Cast the extracted data to a Map<String, dynamic>
       final temp2 = temp1 as Map<String, dynamic>;
-
-      products =
-          temp2
-              .map((key, value) => MapEntry(key, Product.fromJson(value)))
-              .values
-              .toList();
+      
+      // Convert the map entries to Product objects and store them in a list
+      products = temp2.map((key, value) => MapEntry(key, Product.fromJson(value)))
+                      .values
+                      .toList();
+      
+      // Sort the products list based on the product level
       products.sort((a, b) => a.productLevel.compareTo(b.productLevel));
+      
+      // Filter out products with an amount of 0
       products = products.where((product) => product.amount > 0).toList();
+      print(products.map((product) => product.name));
     });
 
+    // Check if the snapshot exists before accessing its data
     if (!snapshot.exists) {
-      return;
+      return; // Exit the function early if the snapshot does not exist
     }
+
+    // Update the state with the user's money information
     setState(() {
+      // Parse the 'money' field from the document data as a double
       userMoney = double.parse((snapshot.data()!)['money'].toString());
     });
+
+    // Initialize a map to track if the user has enough money for each product
     ismoneyEnough = <Product, bool>{};
+    
+    // Iterate over each product and determine if the user has enough money
     for (var product in products) {
       setState(() {
+        // Check if the user has enough money for the current product
         ismoneyEnough[product] = product.isMoneyEnough(userMoney);
       });
     }
@@ -343,6 +385,10 @@ class FactoryPageState extends State<FactoryPage>
                                         'Purchase Price:   ${product.purchasePrice}',
                                       ),
                                       SizedBox(height: 5),
+                                      Text(
+                                        'Required Materials:   ${product.requiredMaterials}',
+                                      ),
+                                      SizedBox(height: 5),
                                       Text('Unlocked:   ${product.unlocked}'),
                                     ],
                                   ),
@@ -459,6 +505,7 @@ class FactoryPageState extends State<FactoryPage>
                                     onPressed:
                                         products.any((p) => p.isProducing) ||
                                                 !ismoneyEnough[product]!
+                                                || !hasEnoughMaterials(product)
                                             ? null
                                             : () async {
                                               if (mounted) {

@@ -90,7 +90,8 @@ class _AllproductsState extends State<Allproducts>
             'name': product.name,
             'productionTime': product.productionTime,
             'productLevel': product.productLevel,
-            'amount': product.amount,
+            'amount': product.amount+1,
+            'requiredMaterials': product.requiredMaterials,
             'unlocked': product.unlocked,
           },
         });
@@ -304,6 +305,10 @@ class _AllproductsState extends State<Allproducts>
                                           'Purchase Price:  ${product.purchasePrice}',
                                         ),
                                         SizedBox(height: 5),
+                                        Text(
+                                          'Required Materials:  ${product.requiredMaterials}',
+                                        ),
+                                        SizedBox(height: 5),
                                         Text('Unlocked:  ${product.unlocked}'),
                                       ],
                                     ),
@@ -396,10 +401,10 @@ class _AllproductsState extends State<Allproducts>
                                         ),
                                       ),
                                       subtitle: Text(
-                                        'Time: ${product.productionTime}s \nAmount: ${product.amount} \nPrice: ${product.purchasePrice.toInt()}\$ \nLevel: ${product.productLevel}',
+                                        'Time: ${product.productionTime}s \nAmount: ${product.amount == 0 ? '∞' : product.amount} \nPrice: ${product.purchasePrice.toInt()}\$ \nLevel: ${product.productLevel}',
                                         style: GoogleFonts.lato(
                                           color: Colors.white,
-                                          fontSize: 12,
+                                          fontSize: 13,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1.5,
                                           wordSpacing: 1.5,

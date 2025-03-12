@@ -311,6 +311,10 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                               ),
                                               SizedBox(height: 5),
                                               Text(
+                                                'Required Materials:   ${product.requiredMaterials}',
+                                              ),
+                                              SizedBox(height: 5),
+                                              Text(
                                                 'Unlocked:   ${product.unlocked}',
                                               ),
                                             ],

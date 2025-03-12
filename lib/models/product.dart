@@ -9,6 +9,7 @@ class Product {
   int amount = 0;
   int remainingTime = 0;
   int productLevel;
+  Map<String, int> requiredMaterials = {};
   bool unlocked = false;
 
   Product({
@@ -21,6 +22,7 @@ class Product {
     this.startTime,
     this.amount = 0,
     this.remainingTime = 0,
+    this.requiredMaterials = const {},
     this.unlocked = false,
   });
 
@@ -38,6 +40,7 @@ class Product {
           : null,
       amount: json['amount'] ?? 0,
       remainingTime: json['remainingTime'] ?? 0,
+      requiredMaterials: Map<String, int>.from(json['requiredMaterials']),
       unlocked: json['unlocked'] ?? false,
     );
   }
@@ -54,6 +57,7 @@ class Product {
       'startTime': startTime?.toIso8601String(),
       'amount': amount,
       'remainingTime': remainingTime,
+      'requiredMaterials': requiredMaterials,
       'unlocked': unlocked,
     };
   }
@@ -69,6 +73,7 @@ class Product {
       startTime: startTime ?? this.startTime,
       amount: amount,
       remainingTime: remainingTime,
+      requiredMaterials: requiredMaterials,
       unlocked: unlocked,
     );
   }

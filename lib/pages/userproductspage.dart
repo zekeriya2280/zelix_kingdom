@@ -323,6 +323,10 @@ class ProductionPageState extends State<ProductionPage>
                                         'Purchase Price:   ${product.purchasePrice}',
                                       ),
                                       SizedBox(height: 5),
+                                      Text(
+                                        'Required Materials:   ${product.requiredMaterials}',
+                                      ),
+                                      SizedBox(height: 5),
                                       Text('Unlocked:   ${product.unlocked}'),
                                     ],
                                   ),
