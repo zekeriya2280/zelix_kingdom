@@ -1,0 +1,2 @@
+C:/FlutterWorks/zelix_kingdom/zelix_kingdom/android/app/.cxx/RelWithDebInfo/o712g610/x86/CMakeFiles/edit_cache.dir
+C:/FlutterWorks/zelix_kingdom/zelix_kingdom/android/app/.cxx/RelWithDebInfo/o712g610/x86/CMakeFiles/rebuild_cache.dir
