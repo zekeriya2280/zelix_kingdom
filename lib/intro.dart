@@ -39,7 +39,7 @@ class _IntroScreenState extends State<IntroScreen> {
       var newProducts = [
         Product(
           id: Random().nextInt(1000000000).toString(),
-          name: 'plastic panel',
+          name: 'glue', 
           productionTime: Random().nextInt(100) + 3,
           remainingTime: Random().nextInt(100) + 3,
           purchasePrice: 2000,
@@ -47,7 +47,8 @@ class _IntroScreenState extends State<IntroScreen> {
           isProducing: false,
           amount: 0,
           unlocked: false,
-          productLevel: 2,
+          requiredMaterials: {},
+          productLevel: 3,
         ),
         // Daha fazla ürün ekleyebilirsiniz
       ];

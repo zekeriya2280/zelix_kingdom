@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:zelix_kingdom/models/product.dart';
 import 'package:vector_math/vector_math_64.dart' as vectorMath;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'dart:math';
 
 class Techtree extends StatefulWidget {
   const Techtree({super.key});
@@ -213,283 +214,332 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                       context,
                       levelindex,
                     ) {
-                      return ListView.builder(
-                        itemCount:
-                            findProductsWithLevels(
-                              products,
-                              levelindex,
-                            ).length, // Ürün sayısı
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 100,
-                          horizontal: 0,
-                        ),
-                        itemBuilder: (context, index) {
-                          //List<Color> cardColors = List.generate(
-                          //  products.length,
-                          //  (index) => const Color.fromARGB(255, 240, 158, 34),
-                          //);
-                          final product =
-                              findProductsWithLevels(
-                                products,
-                                levelindex,
-                              )[index]; // Mevcut ürün
+                      final List<Product> productslevellist =
+                          findProductsWithLevels(products, levelindex);
+                      return Stack(
+                        children: [
+                          Center(
+                            heightFactor: 1,
+                            child: Opacity(
+                              opacity: 1,
+                              child: Text(
+                                'Level ${levelindex + 1}', style: GoogleFonts.lato(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.5,
+                                wordSpacing: 1.5,
+                                )),
+                            ),
+                          ),
+                          Container(
+                            color: Color.fromARGB(
+                              110,
+                              Random().nextInt(255),
+                              Random().nextInt(255),
+                              Random().nextInt(255),
+                            ),
+                            child: ListView.builder(
+                              itemCount:
+                                  productslevellist.length, // Ürün sayısı
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 100,
+                                horizontal: 0,
+                              ),
+                              itemBuilder: (context, index) {
+                                final product =
+                                    productslevellist[index]; // Mevcut ürün
 
-                          return SingleChildScrollView(
-                            child: InkWell(
-                              onTap:
-                                  () => showDialog(
-                                    context: context,
-                                    builder:
-                                        (context) => AlertDialog(
-                                          title: Center(
-                                            child: Text(
-                                              product.name,
-                                              style: GoogleFonts.lato(
-                                                color: const Color.fromARGB(
-                                                  255,
-                                                  179,
-                                                  255,
-                                                  0,
-                                                ),
-                                                fontSize: 30,
-                                                fontWeight: FontWeight.bold,
-                                                letterSpacing: 1.5,
-                                                wordSpacing: 1.5,
-                                                shadows: const <Shadow>[
-                                                  Shadow(
-                                                    offset: Offset(2.0, 2.0),
-                                                    blurRadius: 3.0,
-                                                    color: Color.fromARGB(
-                                                      255,
-                                                      255,
-                                                      0,
-                                                      0,
+                                return SingleChildScrollView(
+                                  child: InkWell(
+                                    onTap:
+                                        () => showDialog(
+                                          context: context,
+                                          builder:
+                                              (context) => AlertDialog(
+                                                title: Center(
+                                                  child: Text(
+                                                    product.name,
+                                                    style: GoogleFonts.lato(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                            255,
+                                                            179,
+                                                            255,
+                                                            0,
+                                                          ),
+                                                      fontSize: 30,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      letterSpacing: 1.5,
+                                                      wordSpacing: 1.5,
+                                                      shadows: const <Shadow>[
+                                                        Shadow(
+                                                          offset: Offset(
+                                                            2.0,
+                                                            2.0,
+                                                          ),
+                                                          blurRadius: 3.0,
+                                                          color: Color.fromARGB(
+                                                            255,
+                                                            255,
+                                                            0,
+                                                            0,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                      fontStyle:
+                                                          FontStyle.italic,
                                                     ),
+                                                  ),
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    Text(
+                                                      'Name:  ${product.name}',
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text('ID:  ${product.id}'),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      'Production Time:   ${product.productionTime}',
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      'Level:   ${product.productLevel}',
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      'Remaining Time:  ${product.remainingTime}',
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      'Started At:   ${product.startTime}',
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      'Amount:   ${product.amount}',
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      'Is Producing:  ${product.isProducing}',
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      'Price:   ${product.purchasePrice}',
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      'Required Materials:   ${product.requiredMaterials}',
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      'Unlocked:   ${product.unlocked}',
+                                                    ),
+                                                  ],
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Center(
+                                                      child: Text(
+                                                        'Close',
+                                                        style: GoogleFonts.lato(
+                                                          color: Colors.red,
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    onPressed:
+                                                        () => Navigator.pop(
+                                                          context,
+                                                        ),
                                                   ),
                                                 ],
-                                                fontStyle: FontStyle.italic,
+                                                backgroundColor:
+                                                    const Color.fromARGB(
+                                                      210,
+                                                      62,
+                                                      96,
+                                                      146,
+                                                    ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                ),
+                                                titleTextStyle:
+                                                    GoogleFonts.lato(
+                                                      color: Colors.orange,
+                                                      fontSize: 30,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                alignment: Alignment.center,
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 20,
+                                                    ),
+                                                titlePadding:
+                                                    const EdgeInsets.all(20),
+                                                actionsAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                contentTextStyle:
+                                                    GoogleFonts.lato(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      letterSpacing: 1.5,
+                                                    ),
                                               ),
-                                            ),
+                                        ),
+                                    child: AnimatedBuilder(
+                                      animation: _rotationAnimation,
+                                      child: Container(),
+                                      builder: (context, child) {
+                                        return TweenAnimationBuilder<double>(
+                                          tween: Tween(
+                                            begin: 270,
+                                            end: _rotationAnimation.value,
                                           ),
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              Text('Name:  ${product.name}'),
-                                              SizedBox(height: 5),
-                                              Text('ID:  ${product.id}'),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                'Production Time:   ${product.productionTime}',
-                                              ),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                'Level:   ${product.productLevel}',
-                                              ),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                'Remaining Time:  ${product.remainingTime}',
-                                              ),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                'Started At:   ${product.startTime}',
-                                              ),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                'Amount:   ${product.amount}',
-                                              ),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                'Is Producing:  ${product.isProducing}',
-                                              ),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                'Price:   ${product.purchasePrice}',
-                                              ),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                'Required Materials:   ${product.requiredMaterials}',
-                                              ),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                'Unlocked:   ${product.unlocked}',
-                                              ),
-                                            ],
+                                          duration: const Duration(
+                                            milliseconds: 500,
                                           ),
-                                          actions: [
-                                            TextButton(
-                                              child: Center(
-                                                child: Text(
-                                                  'Close',
-                                                  style: GoogleFonts.lato(
-                                                    color: Colors.red,
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
+                                          builder: (
+                                            context,
+                                            double value,
+                                            child,
+                                          ) {
+                                            return Transform(
+                                              alignment: Alignment.centerLeft,
+                                              transform:
+                                                  Matrix4.identity()
+                                                    ..setEntry(3, 2, 0.001)
+                                                    ..rotateX(
+                                                      vectorMath.radians(value),
+                                                    ),
+                                              origin: const Offset(45, 10),
+                                              child: Card(
+                                                color:
+                                                    selectedindex != -1
+                                                        ? Colors.green
+                                                        : const Color.fromARGB(
+                                                          255,
+                                                          240,
+                                                          158,
+                                                          34,
+                                                        ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                                elevation: 8,
+                                                child: ListTile(
+                                                  title: Text(
+                                                    product.name,
+                                                    style: GoogleFonts.lato(
+                                                      color: Colors.white,
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      letterSpacing: 1.5,
+                                                      wordSpacing: 1.5,
+                                                    ),
                                                   ),
+                                                  subtitle: Text(
+                                                    'Time: ${product.productionTime}s \nPrice: ${product.purchasePrice.toInt()}\$ \nLevel: ${product.productLevel}',
+                                                    style: GoogleFonts.lato(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      letterSpacing: 1.5,
+                                                      wordSpacing: 1.5,
+                                                    ),
+                                                  ),
+                                                  trailing:
+                                                      product.unlocked == true
+                                                          ? Padding(
+                                                            padding:
+                                                                const EdgeInsets.only(
+                                                                  right: 18.0,
+                                                                ),
+                                                            child: const Icon(
+                                                              Icons.lock_open,
+                                                              color:
+                                                                  Colors.white,
+                                                              size: 30,
+                                                            ),
+                                                          )
+                                                          : ElevatedButton(
+                                                            style: ButtonStyle(
+                                                              backgroundColor:
+                                                                  WidgetStatePropertyAll<
+                                                                    Color
+                                                                  >(
+                                                                    Colors
+                                                                        .white,
+                                                                  ),
+                                                            ),
+                                                            onPressed: () async {
+                                                              print(
+                                                                'starting selected $selectedindex',
+                                                              );
+                                                              setState(() {
+                                                                selectedindex =
+                                                                    index;
+                                                                // times[index] = DateTime.now();
+                                                              });
+                                                              await Future.delayed(
+                                                                const Duration(
+                                                                  milliseconds:
+                                                                      1000,
+                                                                ),
+                                                                () async {
+                                                                  setState(() {
+                                                                    selectedindex =
+                                                                        -1;
+                                                                  });
+                                                                  await setProductUnlocked(
+                                                                    product,
+                                                                  );
+                                                                },
+                                                              );
+                                                              print(
+                                                                'finished selected $selectedindex',
+                                                              );
+                                                            },
+                                                            child:
+                                                                selectedindex ==
+                                                                        index
+                                                                    ? const CircularProgressIndicator()
+                                                                    : const Text(
+                                                                      'Unlock',
+                                                                    ),
+                                                          ),
                                                 ),
                                               ),
-                                              onPressed:
-                                                  () => Navigator.pop(context),
-                                            ),
-                                          ],
-                                          backgroundColor: const Color.fromARGB(
-                                            210,
-                                            62,
-                                            96,
-                                            146,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              50,
-                                            ),
-                                          ),
-                                          titleTextStyle: GoogleFonts.lato(
-                                            color: Colors.orange,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          alignment: Alignment.center,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 20,
-                                                vertical: 20,
-                                              ),
-                                          titlePadding: const EdgeInsets.all(
-                                            20,
-                                          ),
-                                          actionsAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          contentTextStyle: GoogleFonts.lato(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.5,
-                                          ),
-                                        ),
-                                  ),
-                              child: AnimatedBuilder(
-                                animation: _rotationAnimation,
-                                child: Container(),
-                                builder: (context, child) {
-                                  return TweenAnimationBuilder<double>(
-                                    tween: Tween(
-                                      begin: 270,
-                                      end: _rotationAnimation.value,
+                                            );
+                                          },
+                                        );
+                                      },
                                     ),
-                                    duration: const Duration(milliseconds: 500),
-                                    builder: (context, double value, child) {
-                                      return Transform(
-                                        alignment: Alignment.centerLeft,
-                                        transform:
-                                            Matrix4.identity()
-                                              ..setEntry(3, 2, 0.001)
-                                              ..rotateX(
-                                                vectorMath.radians(value),
-                                              ),
-                                        origin: const Offset(45, 10),
-                                        child: Card(
-                                          color:
-                                              selectedindex != -1
-                                                  ? Colors.green
-                                                  : const Color.fromARGB(
-                                                    255,
-                                                    240,
-                                                    158,
-                                                    34,
-                                                  ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              15,
-                                            ),
-                                          ),
-                                          elevation: 8,
-                                          child: ListTile(
-                                            title: Text(
-                                              product.name,
-                                              style: GoogleFonts.lato(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                letterSpacing: 1.5,
-                                                wordSpacing: 1.5,
-                                              ),
-                                            ),
-                                            subtitle: Text(
-                                              'Time: ${product.productionTime}s \nPrice: ${product.purchasePrice.toInt()}\$ \nLevel: ${product.productLevel}',
-                                              style: GoogleFonts.lato(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                letterSpacing: 1.5,
-                                                wordSpacing: 1.5,
-                                              ),
-                                            ),
-                                            trailing:
-                                                product.unlocked == true
-                                                    ? Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            right: 18.0,
-                                                          ),
-                                                      child: const Icon(
-                                                        Icons.lock_open,
-                                                        color: Colors.white,
-                                                        size: 30,
-                                                      ),
-                                                    )
-                                                    : ElevatedButton(
-                                                      style: ButtonStyle(
-                                                        backgroundColor:
-                                                            WidgetStatePropertyAll<
-                                                              Color
-                                                            >(Colors.white),
-                                                      ),
-                                                      onPressed: () async {
-                                                        print(
-                                                          'starting selected $selectedindex',
-                                                        );
-                                                        setState(() {
-                                                          selectedindex = index;
-                                                          // times[index] = DateTime.now();
-                                                        });
-                                                        await Future.delayed(
-                                                          const Duration(
-                                                            milliseconds: 1000,
-                                                          ),
-                                                          () async {
-                                                            setState(() {
-                                                              selectedindex =
-                                                                  -1;
-                                                            });
-                                                            await setProductUnlocked(
-                                                              product,
-                                                            );
-                                                          },
-                                                        );
-                                                        print(
-                                                          'finished selected $selectedindex',
-                                                        );
-                                                      },
-                                                      child:
-                                                          selectedindex == index
-                                                              ? const CircularProgressIndicator()
-                                                              : const Text(
-                                                                'Unlock',
-                                                              ),
-                                                    ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
+                          ),
+                        ],
                       );
                     }),
                   ),
