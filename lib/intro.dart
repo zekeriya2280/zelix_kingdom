@@ -19,7 +19,7 @@ class _IntroScreenState extends State<IntroScreen> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   @override
   void initState() {
-    //addProductsToFirestore();  //   RESET ............................................
+    addProductsToFirestore();  //   RESET ............................................
     super.initState();
   }
 
@@ -39,7 +39,7 @@ class _IntroScreenState extends State<IntroScreen> {
       var newProducts = [
         Product(
           id: Random().nextInt(1000000000).toString(),
-          name: 'glue', 
+          name: 'water', 
           productionTime: Random().nextInt(100) + 3,
           remainingTime: Random().nextInt(100) + 3,
           purchasePrice: 2000,
@@ -48,7 +48,7 @@ class _IntroScreenState extends State<IntroScreen> {
           amount: 0,
           unlocked: false,
           requiredMaterials: {},
-          productLevel: 3,
+          productLevel: 1,
         ),
         // Daha fazla ürün ekleyebilirsiniz
       ];
