@@ -19,7 +19,7 @@ class _IntroScreenState extends State<IntroScreen> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   @override
   void initState() {
-   // addProductsToFirestore();  //   RESET ............................................
+    //addProductsToFirestore();  //   RESET ............................................
     super.initState();
   }
 
@@ -39,7 +39,7 @@ class _IntroScreenState extends State<IntroScreen> {
       var newProducts = [
         Product(
           id: Random().nextInt(1000000000).toString(),
-          name: 'resin', 
+          name: 'petrol', 
           productionTime: Random().nextInt(100) + 3,
           remainingTime: Random().nextInt(100) + 3,
           purchasePrice: 2000,
