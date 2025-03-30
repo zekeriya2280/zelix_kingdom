@@ -27,7 +27,7 @@ class Product {
   });
 
   // JSON'dan Product modeline dönüşüm
-  factory Product.fromJson(Map<String, dynamic> json) {
+  factory Product.fromJson(Map<dynamic, dynamic> json) {
     return Product(
       id: json['id'],
       name: json['name'],

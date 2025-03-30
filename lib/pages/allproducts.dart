@@ -77,23 +77,35 @@ class _AllproductsState extends State<Allproducts>
   Future<void> addSelectedProductFromAllProductsToUserFBProducts(
     Product product,
   ) async {
+    int newAmount = await _db
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get().then((value) {
+      if (value.exists) {
+        return value.data()!['products'].containsKey(product.id)
+            ? value.data()!['products'][product.id]['amount'] + 1
+            : 1;
+      } else {
+        return 0;
+      }
+    });
     await _db
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .update({
-          'products.${product.id}': {
-            'remainingTime': product.remainingTime,
-            'isProducing': product.isProducing,
-            'startTime': product.startTime,
-            'purchasePrice': product.purchasePrice,
+          'products.${product.id}' : {
             'id': product.id,
             'name': product.name,
             'productionTime': product.productionTime,
             'productLevel': product.productLevel,
-            'amount': product.amount+1,
-            'requiredMaterials': product.requiredMaterials,
+            'isProducing': false,
+            'startTime': null,
+            'purchasePrice': product.purchasePrice,
+            'amount': newAmount,
+            'remainingTime': 0,
             'unlocked': product.unlocked,
-          },
+            'requiredMaterials': product.requiredMaterials,
+          }
         });
   }
 
@@ -157,8 +169,8 @@ class _AllproductsState extends State<Allproducts>
                   ),
                 ),
                 title: Text(
-                  'Add Products',
-                  style: GoogleFonts.lato(color: Colors.white),
+                  'Unlocked Products',
+                  style: GoogleFonts.lato(color: Colors.white, fontSize: 15),
                 ), // Başlık
                 centerTitle: true,
                 backgroundColor: const Color.fromARGB(
@@ -180,7 +192,7 @@ class _AllproductsState extends State<Allproducts>
                       color: Colors.white,
                     ),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/userproducts');
+                      Navigator.pushReplacementNamed(context, '/techtree');
                     },
                   ),
                   IconButton(

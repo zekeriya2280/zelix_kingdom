@@ -39,7 +39,7 @@ class _IntroScreenState extends State<IntroScreen> {
       var newProducts = [
         Product(
           id: Random().nextInt(1000000000).toString(),
-          name: 'petrol', 
+          name: 'petrol',
           productionTime: Random().nextInt(100) + 3,
           remainingTime: Random().nextInt(100) + 3,
           purchasePrice: 2000,
@@ -76,7 +76,13 @@ class _IntroScreenState extends State<IntroScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-         Image(image: AssetImage('assets/arkaplan.jpeg'),alignment: Alignment.center, fit: BoxFit.cover, width: double.infinity, height: double.infinity,),
+        Image(
+          image: AssetImage('assets/arkaplan.jpeg'),
+          alignment: Alignment.center,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        ),
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
@@ -274,7 +280,6 @@ class _IntroScreenState extends State<IntroScreen> {
             ),
           ),
         ),
-       
       ],
     );
   }

@@ -82,6 +82,15 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
         .where((product) => product.productLevel == level + 1)
         .toList();
   }
+  Future<void> updateUserMoneyInFirebase(
+      double newMoney) async => await _db
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'money': newMoney}).then((value) {
+            print('User money updated successfully!');
+          }).catchError((error) {
+            print('Failed to update user money: $error');
+          });
 
   @override
   void dispose() {
@@ -457,7 +466,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                     ),
                                                   ),
                                                   subtitle: Text(
-                                                    'Time: ${product.productionTime}s \nPrice: ${product.purchasePrice.toInt()}\$ \nLevel: ${product.productLevel}',
+                                                    'ProductionTime: ${product.productionTime}s \nPrice: ${product.purchasePrice.toInt()}\$ \nLevel: ${product.productLevel}',
                                                     style: GoogleFonts.lato(
                                                       color: Colors.white,
                                                       fontSize: 12,
@@ -483,7 +492,14 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                           )
                                                           : ElevatedButton(
                                                             style: ButtonStyle(
-                                                              backgroundColor:
+                                                              backgroundColor: userMoney < product.purchasePrice ? 
+                                                                   WidgetStatePropertyAll<
+                                                                    Color
+                                                                  >(
+                                                                    Colors
+                                                                        .grey,
+                                                                  )
+                                                                  :
                                                                   WidgetStatePropertyAll<
                                                                     Color
                                                                   >(
@@ -491,7 +507,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                                         .white,
                                                                   ),
                                                             ),
-                                                            onPressed: () async {
+                                                            onPressed: userMoney < product.purchasePrice ? null : () async {
                                                               print(
                                                                 'starting selected $selectedindex',
                                                               );
@@ -513,6 +529,12 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                                   await setProductUnlocked(
                                                                     product,
                                                                   );
+                                                                  await updateUserMoneyInFirebase(
+                                                                    userMoney -
+                                                                        product
+                                                                            .purchasePrice,
+                                                                  );
+                                                                  await findusermoney();
                                                                 },
                                                               );
                                                               print(
@@ -523,8 +545,19 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                                 selectedindex ==
                                                                         index
                                                                     ? const CircularProgressIndicator()
-                                                                    : const Text(
-                                                                      'Unlock',
+                                                                    : Text(
+                                                                      'Unlock',style:  userMoney < product.purchasePrice ? TextStyle(color: Colors.purple, fontSize: 15, fontWeight: FontWeight.w400, letterSpacing: 1.5) : TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w400,
+                                                                        letterSpacing:
+                                                                            1.5
+                                                                        
+                                                                      ),
                                                                     ),
                                                           ),
                                                 ),

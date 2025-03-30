@@ -200,6 +200,21 @@ class ProductionPageState extends State<ProductionPage>
                 ), // Mavi arka plan
                 actions: [
                   IconButton(
+                    icon: const Icon(Icons.list_alt, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/allproducts');
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.account_tree_outlined,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/techtree');
+                    },
+                  ),
+                  IconButton(
                     icon: const Icon(Icons.home, color: Colors.white),
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/intro');

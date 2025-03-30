@@ -31,51 +31,54 @@ class FactoryPageState extends State<FactoryPage>
     findusermoneyAndUserproducts();
     super.initState();
   }
+
   bool hasEnoughMaterials(Product product) {
     if (product.requiredMaterials.isEmpty) return true;
     for (var entry in product.requiredMaterials.entries) {
       String materialId = entry.key;
       int requiredAmount = entry.value;
-      
-      Product? material = products.firstWhere(
-        (p) => p.id == materialId
-      );
-      
+
+      Product? material = products.firstWhere((p) => p.id == materialId);
+
       if (material.amount < requiredAmount) return false;
     }
     return true;
   }
+
   void startProduction(Product product) async {
-  for (var entry in product.requiredMaterials.entries) {
-    String materialId = entry.key;
-    int requiredAmount = entry.value;
-    
-    Product material = products.firstWhere((p) => p.id == materialId);
-    setState(() => material.amount -= requiredAmount);
-    await updateUserProductsInFirebase(material);
+    for (var entry in product.requiredMaterials.entries) {
+      String materialId = entry.key;
+      int requiredAmount = entry.value;
+
+      Product material = products.firstWhere((p) => p.id == materialId);
+      setState(() => material.amount -= requiredAmount);
+      await updateUserProductsInFirebase(material);
+    }
   }
-}
 
   Future<void> findusermoneyAndUserproducts() async {
     // Retrieve the user's document snapshot from Firestore
-    final snapshot = await users.doc(FirebaseAuth.instance.currentUser!.uid).get();
-    
+    final snapshot =
+        await users.doc(FirebaseAuth.instance.currentUser!.uid).get();
+
     // Update the state with the user's products and money information
     setState(() {
       // Extract the 'products' field from the document data
       final temp1 = (snapshot.data()!)['products'];
-      
+
       // Cast the extracted data to a Map<String, dynamic>
-      final temp2 = temp1 as Map<String, dynamic>;
-      
+      final temp2 = Map<String, dynamic>.from(temp1);
+
+
       // Convert the map entries to Product objects and store them in a list
-      products = temp2.map((key, value) => MapEntry(key, Product.fromJson(value)))
-                      .values
-                      .toList();
-      
+      final temp3 =  List<Map<String, dynamic>>.from(temp2.values.toList());
+      products = temp3.map((productData) => Product.fromJson(productData)).toList();
+   //  print(temp3.map((product) => product.name));
+   //products = temp3;
+
       // Sort the products list based on the product level
       products.sort((a, b) => a.productLevel.compareTo(b.productLevel));
-      
+
       // Filter out products with an amount of 0
       products = products.where((product) => product.amount > 0).toList();
       print(products.map((product) => product.name));
@@ -94,7 +97,7 @@ class FactoryPageState extends State<FactoryPage>
 
     // Initialize a map to track if the user has enough money for each product
     ismoneyEnough = <Product, bool>{};
-    
+
     // Iterate over each product and determine if the user has enough money
     for (var product in products) {
       setState(() {
@@ -245,23 +248,21 @@ class FactoryPageState extends State<FactoryPage>
                 actions: [
                   Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: IconButton(onPressed: () {}, 
-                    icon: GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(context, '/allproducts');
-                        },
-                        child: Icon(
-                          FontAwesomeIcons.bookBookmark,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
+                    child: IconButton(
+                      icon: const Icon(Icons.list_alt, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/allproducts');
+                      },
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: IconButton(
-                      icon: const Icon(Icons.home, color: Colors.white, size: 30),
+                      icon: const Icon(
+                        Icons.home,
+                        color: Colors.white,
+                        size: 30,
+                      ),
                       onPressed: () {
                         Navigator.pushReplacementNamed(context, '/intro');
                       },
@@ -270,17 +271,15 @@ class FactoryPageState extends State<FactoryPage>
                 ],
               ),
               bottomNavigationBar: BottomNavigationBar(
-                backgroundColor: const Color.fromARGB(
-                  210,
-                  13,
-                  72,
-                  161,
-                ),
+                backgroundColor: const Color.fromARGB(210, 13, 72, 161),
                 items: [
                   BottomNavigationBarItem(
                     icon: GestureDetector(
                       onTap: () {
-                        Navigator.pushReplacementNamed(context, '/userproducts');
+                        Navigator.pushReplacementNamed(
+                          context,
+                          '/userproducts',
+                        );
                       },
                       child: Icon(
                         FontAwesomeIcons.shop,
@@ -291,11 +290,19 @@ class FactoryPageState extends State<FactoryPage>
                     label: '',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.truck, color: Colors.white, size: 30),
+                    icon: Icon(
+                      FontAwesomeIcons.truck,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                     label: '',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.city, color: Colors.white, size: 30),
+                    icon: Icon(
+                      FontAwesomeIcons.city,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                     label: '',
                   ),
                 ],
@@ -504,8 +511,8 @@ class FactoryPageState extends State<FactoryPage>
                                   : ElevatedButton(
                                     onPressed:
                                         products.any((p) => p.isProducing) ||
-                                                !ismoneyEnough[product]!
-                                                || !hasEnoughMaterials(product)
+                                                !ismoneyEnough[product]! ||
+                                                !hasEnoughMaterials(product)
                                             ? null
                                             : () async {
                                               if (mounted) {
