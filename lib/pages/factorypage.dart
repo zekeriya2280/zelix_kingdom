@@ -156,7 +156,7 @@ class FactoryPageState extends State<FactoryPage>
   Future<void> syncProductsToUserFirebaseAndIncreaseAmount(
     Product product,
   ) async {
-    assert(product == null, 'Product cannot be null');
+    // Removed unnecessary null check as 'product' cannot be null
     assert(
       FirebaseAuth.instance.currentUser != null,
       'User must be authenticated to sync products to Firebase',

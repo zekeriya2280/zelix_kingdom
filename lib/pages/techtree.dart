@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zelix_kingdom/constants/productconstants.dart';
 import 'package:zelix_kingdom/models/product.dart';
 import 'package:vector_math/vector_math_64.dart' as vectorMath;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -82,15 +83,26 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
         .where((product) => product.productLevel == level + 1)
         .toList();
   }
-  Future<void> updateUserMoneyInFirebase(
-      double newMoney) async => await _db
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'money': newMoney}).then((value) {
-            print('User money updated successfully!');
-          }).catchError((error) {
-            print('Failed to update user money: $error');
-          });
+
+  Future<void> updateUserMoneyInFirebase(double newMoney) async => await _db
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({'money': newMoney})
+      .then((value) {
+        print('User money updated successfully!');
+      })
+      .catchError((error) {
+        print('Failed to update user money: $error');
+      });
+   Future<void> updateUserProductsInFirebase(Product product) async {
+    await _db
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+          'products.${product.id}': ProductConstants()
+              .createProductMapOnlyUpdateAll(product),
+        });
+  }
 
   @override
   void dispose() {
@@ -232,13 +244,15 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                             child: Opacity(
                               opacity: 1,
                               child: Text(
-                                'Level ${levelindex + 1}', style: GoogleFonts.lato(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.5,
-                                wordSpacing: 1.5,
-                                )),
+                                'Level ${levelindex + 1}',
+                                style: GoogleFonts.lato(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.5,
+                                  wordSpacing: 1.5,
+                                ),
+                              ),
                             ),
                           ),
                           Container(
@@ -492,72 +506,93 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                           )
                                                           : ElevatedButton(
                                                             style: ButtonStyle(
-                                                              backgroundColor: userMoney < product.purchasePrice ? 
-                                                                   WidgetStatePropertyAll<
-                                                                    Color
-                                                                  >(
-                                                                    Colors
-                                                                        .grey,
-                                                                  )
-                                                                  :
-                                                                  WidgetStatePropertyAll<
-                                                                    Color
-                                                                  >(
-                                                                    Colors
-                                                                        .white,
-                                                                  ),
+                                                              backgroundColor:
+                                                                  userMoney <
+                                                                          product
+                                                                              .purchasePrice
+                                                                      ? WidgetStatePropertyAll<
+                                                                        Color
+                                                                      >(
+                                                                        Colors
+                                                                            .grey,
+                                                                      )
+                                                                      : WidgetStatePropertyAll<
+                                                                        Color
+                                                                      >(
+                                                                        Colors
+                                                                            .white,
+                                                                      ),
                                                             ),
-                                                            onPressed: userMoney < product.purchasePrice ? null : () async {
-                                                              print(
-                                                                'starting selected $selectedindex',
-                                                              );
-                                                              setState(() {
-                                                                selectedindex =
-                                                                    index;
-                                                                // times[index] = DateTime.now();
-                                                              });
-                                                              await Future.delayed(
-                                                                const Duration(
-                                                                  milliseconds:
-                                                                      1000,
-                                                                ),
-                                                                () async {
-                                                                  setState(() {
-                                                                    selectedindex =
-                                                                        -1;
-                                                                  });
-                                                                  await setProductUnlocked(
-                                                                    product,
-                                                                  );
-                                                                  await updateUserMoneyInFirebase(
-                                                                    userMoney -
+                                                            onPressed:
+                                                                userMoney <
                                                                         product
-                                                                            .purchasePrice,
-                                                                  );
-                                                                  await findusermoney();
-                                                                },
-                                                              );
-                                                              print(
-                                                                'finished selected $selectedindex',
-                                                              );
-                                                            },
+                                                                            .purchasePrice
+                                                                    ? null
+                                                                    : () async {
+                                                                      print(
+                                                                        'starting selected $selectedindex',
+                                                                      );
+                                                                      setState(() {
+                                                                        selectedindex =
+                                                                            index;
+                                                                        // times[index] = DateTime.now();
+                                                                      });
+                                                                      await Future.delayed(
+                                                                        const Duration(
+                                                                          milliseconds:
+                                                                              1000,
+                                                                        ),
+                                                                        () async {
+                                                                          setState(() {
+                                                                            selectedindex =
+                                                                                -1;
+                                                                          });
+                                                                          await setProductUnlocked(
+                                                                            product,
+                                                                          );
+                                                                          await updateUserMoneyInFirebase(
+                                                                            userMoney -
+                                                                                product.purchasePrice,
+                                                                          );
+                                                                          await findusermoney();
+                                                                          await updateUserProductsInFirebase(
+                                                                            product,
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                      print(
+                                                                        'finished selected $selectedindex',
+                                                                      );
+                                                                    },
                                                             child:
                                                                 selectedindex ==
                                                                         index
                                                                     ? const CircularProgressIndicator()
                                                                     : Text(
-                                                                      'Unlock',style:  userMoney < product.purchasePrice ? TextStyle(color: Colors.purple, fontSize: 15, fontWeight: FontWeight.w400, letterSpacing: 1.5) : TextStyle(
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontSize:
-                                                                            15,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w400,
-                                                                        letterSpacing:
-                                                                            1.5
-                                                                        
-                                                                      ),
+                                                                      'Unlock',
+                                                                      style:
+                                                                          userMoney <
+                                                                                  product.purchasePrice
+                                                                              ? TextStyle(
+                                                                                color:
+                                                                                    Colors.purple,
+                                                                                fontSize:
+                                                                                    15,
+                                                                                fontWeight:
+                                                                                    FontWeight.w400,
+                                                                                letterSpacing:
+                                                                                    1.5,
+                                                                              )
+                                                                              : TextStyle(
+                                                                                color:
+                                                                                    Colors.black,
+                                                                                fontSize:
+                                                                                    15,
+                                                                                fontWeight:
+                                                                                    FontWeight.w400,
+                                                                                letterSpacing:
+                                                                                    1.5,
+                                                                              ),
                                                                     ),
                                                           ),
                                                 ),

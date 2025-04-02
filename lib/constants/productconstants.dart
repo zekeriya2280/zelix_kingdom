@@ -12,6 +12,7 @@ class ProductConstants{
     'purchasePrice': product.purchasePrice,
     'amount': product.amount + 1,
     'remainingTime': 0,
+    'requiredMaterials': product.requiredMaterials,
     'unlocked': product.unlocked,
   };
 }
@@ -26,6 +27,7 @@ Map<String, dynamic> createProductMapOnlyUpdateAll(Product product) {
             'name': product.name,
             'productionTime': product.productionTime,
             'amount': product.amount,
+            'requiredMaterials': product.requiredMaterials,
             'unlocked': product.unlocked,
           };
 }

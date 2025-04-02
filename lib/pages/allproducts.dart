@@ -74,40 +74,40 @@ class _AllproductsState extends State<Allproducts>
     });
   }
 
-  Future<void> addSelectedProductFromAllProductsToUserFBProducts(
-    Product product,
-  ) async {
-    int newAmount = await _db
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get().then((value) {
-      if (value.exists) {
-        return value.data()!['products'].containsKey(product.id)
-            ? value.data()!['products'][product.id]['amount'] + 1
-            : 1;
-      } else {
-        return 0;
-      }
-    });
-    await _db
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
-          'products.${product.id}' : {
-            'id': product.id,
-            'name': product.name,
-            'productionTime': product.productionTime,
-            'productLevel': product.productLevel,
-            'isProducing': false,
-            'startTime': null,
-            'purchasePrice': product.purchasePrice,
-            'amount': newAmount,
-            'remainingTime': 0,
-            'unlocked': product.unlocked,
-            'requiredMaterials': product.requiredMaterials,
-          }
-        });
-  }
+//Future<void> addSelectedProductFromAllProductsToUserFBProducts(
+//  Product product,
+//) async {
+//  int newAmount = await _db
+//      .collection('users')
+//      .doc(FirebaseAuth.instance.currentUser!.uid)
+//      .get().then((value) {
+//    if (value.exists) {
+//      return value.data()!['products'].containsKey(product.id)
+//          ? value.data()!['products'][product.id]['amount'] + 1
+//          : 1;
+//    } else {
+//      return 0;
+//    }
+//  });
+//  await _db
+//      .collection('users')
+//      .doc(FirebaseAuth.instance.currentUser!.uid)
+//      .update({
+//        'products.${product.id}' : {
+//          'id': product.id,
+//          'name': product.name,
+//          'productionTime': product.productionTime,
+//          'productLevel': product.productLevel,
+//          'isProducing': false,
+//          'startTime': null,
+//          'purchasePrice': product.purchasePrice,
+//          'amount': newAmount,
+//          'remainingTime': 0,
+//          'unlocked': product.unlocked,
+//          'requiredMaterials': product.requiredMaterials,
+//        }
+//      });
+//}
 
   @override
   void dispose() {
@@ -422,28 +422,29 @@ class _AllproductsState extends State<Allproducts>
                                           wordSpacing: 1.5,
                                         ),
                                       ),
-                                      trailing: ElevatedButton(
-                                        onPressed:
-                                            index == selectedindex
-                                                ? null
-                                                : () async {
-                                                  setState(() {
-                                                    selectedindex = index;
-                                                  });
-                                                  Future.delayed(
-                                                    const Duration(seconds: 2),
-                                                    () {
-                                                      setState(() {
-                                                        selectedindex = -1;
-                                                      });
-                                                    },
-                                                  );
-                                                  await addSelectedProductFromAllProductsToUserFBProducts(
-                                                    product,
-                                                  );
-                                                },
-                                        child: const Text('Add'),
-                                      ),
+                                      trailing: null,
+                                     // ElevatedButton(
+                                     //   onPressed: null,
+                                     //     //  index == selectedindex
+                                     //     //      ? null
+                                     //     //      : () async {
+                                     //     //        setState(() {
+                                     //     //          selectedindex = index;
+                                     //     //        });
+                                     //     //        Future.delayed(
+                                     //     //          const Duration(seconds: 2),
+                                     //     //          () {
+                                     //     //            setState(() {
+                                     //     //              selectedindex = -1;
+                                     //     //            });
+                                     //     //          },
+                                     //     //        );
+                                     //     //        await addSelectedProductFromAllProductsToUserFBProducts(
+                                     //     //          product,
+                                     //     //        );
+                                     //     //      },
+                                     //   child: const Text('Add'),
+                                     // ),
                                     ),
                                   ),
                                 );
