@@ -282,9 +282,9 @@ class FactoryPageState extends State<FactoryPage>
                         );
                       },
                       child: Icon(
-                        FontAwesomeIcons.shop,
+                        Icons.shopping_cart,
                         color: Colors.white,
-                        size: 30,
+                        size: 38,
                       ),
                     ),
                     label: '',

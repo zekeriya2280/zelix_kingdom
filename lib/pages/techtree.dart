@@ -20,6 +20,8 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   late AnimationController _animationController;
   late Animation<double> _rotationAnimation;
+  bool unlockWhenUnderMaterialsAreUnlocked = false;
+  List<Map<Product, bool>> productsRequiredMaterialChecks = [];
   List<Product> products = []; // Ürünler
   //ProductManagement _productManagement = ProductManagement(); // Ürün yönetimi
   double userMoney = 0;
@@ -32,6 +34,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
   @override
   void initState() {
     findusermoney();
+    findRequiredMaterialsUnlocked();
     productIndexes = List.generate(99, (index) => -1);
     //_productManagement = ProductManagement();
     _animationController = AnimationController(
@@ -51,6 +54,16 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
       if (mounted) {
         setState(() {
           userMoney = value;
+        });
+      }
+    });
+  }
+
+  Future<void> findRequiredMaterialsUnlocked() async {
+    await isAllRequiredMaterialsUnlocked().then((value) {
+      if (mounted) {
+        setState(() {
+          productsRequiredMaterialChecks = value;
         });
       }
     });
@@ -94,7 +107,7 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
       .catchError((error) {
         print('Failed to update user money: $error');
       });
-   Future<void> updateUserProductsInFirebase(Product product) async {
+  Future<void> updateUserProductsInFirebase(Product product) async {
     await _db
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -104,12 +117,33 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
         });
   }
 
+  Future<List<Map<Product, bool>>> isAllRequiredMaterialsUnlocked() async {
+    final products = await _db
+        .collection('products')
+        .get()
+        .then(
+          (snapshot) =>
+              snapshot.docs.map((doc) => Product.fromJson(doc.data())).toList(),
+        );
+    return products.map((product) {
+      final requiredMaterials = product.requiredMaterials;
+      final allUnlocked = requiredMaterials.entries.every(
+        (entry) => products.any(
+          (p) => p.requiredMaterials.containsKey(entry.key) && !p.unlocked,
+        ),
+      );
+      return {product: allUnlocked};
+    }).toList();
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -131,6 +165,13 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
             snapshot.data!.docs
                 .map((doc) => Product.fromJson(doc.data()))
                 .toList();
+        productsRequiredMaterialChecks.any(
+              (element) => element.values.any((value) => value == false),
+            )
+            ? print(
+              'Some products have required materials that are not unlocked.',
+            )
+            : print('All products have required materials that are unlocked.');
         return Stack(
           children: [
             Opacity(
@@ -507,9 +548,19 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                           : ElevatedButton(
                                                             style: ButtonStyle(
                                                               backgroundColor:
-                                                                  userMoney <
-                                                                          product
-                                                                              .purchasePrice
+                                                                  (userMoney <
+                                                                              product.purchasePrice ||
+                                                                          productsRequiredMaterialChecks.any(
+                                                                            (
+                                                                              element,
+                                                                            ) => element.values.any(
+                                                                              (
+                                                                                value,
+                                                                              ) =>
+                                                                                  value ==
+                                                                                  false,
+                                                                            ),
+                                                                          ))
                                                                       ? WidgetStatePropertyAll<
                                                                         Color
                                                                       >(
@@ -524,9 +575,19 @@ class _TechtreeState extends State<Techtree> with TickerProviderStateMixin {
                                                                       ),
                                                             ),
                                                             onPressed:
-                                                                userMoney <
-                                                                        product
-                                                                            .purchasePrice
+                                                                (userMoney <
+                                                                            product.purchasePrice ||
+                                                                        productsRequiredMaterialChecks.any(
+                                                                          (
+                                                                            element,
+                                                                          ) => element.values.any(
+                                                                            (
+                                                                              value,
+                                                                            ) =>
+                                                                                value ==
+                                                                                false,
+                                                                          ),
+                                                                        ))
                                                                     ? null
                                                                     : () async {
                                                                       print(
